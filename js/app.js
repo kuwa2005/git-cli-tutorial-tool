@@ -696,8 +696,30 @@ class GitWizardApp {
         this.activeCategory = 'all';
         this.activeDanger = 'all';
         this.currentSearchQuery = '';
+        this.activeReverseCategory = 'all';
+        this.reverseLookupSearchQuery = '';
 
         this.renderReference();
+
+        // サブタブ切り替え
+        const referenceTabs = document.querySelectorAll('.reference-tab');
+        referenceTabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                referenceTabs.forEach(t => t.classList.remove('active'));
+                e.target.classList.add('active');
+
+                const targetTab = e.target.dataset.refTab;
+                document.querySelectorAll('.reference-tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(targetTab).classList.add('active');
+
+                // 逆引きタブに切り替えたら、逆引きリファレンスをレンダリング
+                if (targetTab === 'reverse-lookup') {
+                    this.renderReverseLookup();
+                }
+            });
+        });
 
         const searchInput = document.getElementById('referenceSearch');
         if (searchInput) {
@@ -726,6 +748,26 @@ class GitWizardApp {
                 e.target.classList.add('active');
                 this.activeDanger = e.target.dataset.danger;
                 this.renderReference();
+            });
+        });
+
+        // 逆引きリファレンス検索
+        const reverseLookupSearch = document.getElementById('reverseLookupSearch');
+        if (reverseLookupSearch) {
+            reverseLookupSearch.addEventListener('input', (e) => {
+                this.reverseLookupSearchQuery = e.target.value;
+                this.renderReverseLookup();
+            });
+        }
+
+        // 逆引きカテゴリフィルター
+        const reverseCategoryFilters = document.querySelectorAll('#reverseCategoryFilters .filter-btn');
+        reverseCategoryFilters.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                reverseCategoryFilters.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                this.activeReverseCategory = e.target.dataset.reverseCategory;
+                this.renderReverseLookup();
             });
         });
 
@@ -802,6 +844,91 @@ class GitWizardApp {
         });
 
         referenceContent.innerHTML = html || '<p>該当するコマンドが見つかりませんでした。</p>';
+    }
+
+    /**
+     * 逆引きリファレンスをレンダリング
+     */
+    renderReverseLookup() {
+        const content = document.getElementById('reverseLookupContent');
+        if (!content) return;
+
+        const tasks = ReverseLookupDatabase.tasks;
+        let html = '';
+
+        tasks.forEach(task => {
+            // カテゴリフィルター
+            if (this.activeReverseCategory !== 'all' && task.category !== this.activeReverseCategory) {
+                return;
+            }
+
+            // 検索クエリフィルター
+            if (this.reverseLookupSearchQuery) {
+                const query = this.reverseLookupSearchQuery.toLowerCase();
+                const matchTask = task.task.toLowerCase().includes(query);
+                const matchKeywords = task.keywords.some(kw => kw.toLowerCase().includes(query));
+                if (!matchTask && !matchKeywords) {
+                    return;
+                }
+            }
+
+            const category = ReverseLookupDatabase.categories[task.category];
+
+            html += `
+                <div class="reverse-task-card">
+                    <h3>
+                        ${category.icon}
+                        ${this.escapeHtml(task.task)}
+                    </h3>
+                    <span class="task-category">${category.name}</span>
+            `;
+
+            task.solutions.forEach(solution => {
+                html += `
+                    <div class="reverse-solution">
+                        <h4>
+                            ${this.escapeHtml(solution.title)}
+                            ${solution.dangerLevel ? `<span class="danger-badge danger-${solution.dangerLevel}">${this.getDangerLabel(solution.dangerLevel)}</span>` : ''}
+                        </h4>
+                `;
+
+                if (solution.when) {
+                    html += `<p class="when-to-use">📌 ${this.escapeHtml(solution.when)}</p>`;
+                }
+
+                solution.commands.forEach(cmd => {
+                    html += `
+                        <div class="command-item">
+                            <code>${this.escapeHtml(cmd.cmd)}</code>
+                            <div class="desc">${this.escapeHtml(cmd.desc)}</div>
+                        </div>
+                    `;
+                });
+
+                if (solution.warning) {
+                    html += `<div class="warning-message">${solution.warning}</div>`;
+                }
+
+                html += '</div>'; // reverse-solution
+            });
+
+            html += '</div>'; // reverse-task-card
+        });
+
+        content.innerHTML = html || '<p>該当する情報が見つかりませんでした。</p>';
+    }
+
+    /**
+     * 危険度のラベルを取得
+     */
+    getDangerLabel(level) {
+        const labels = {
+            'safe': '✅ 安全',
+            'warning': '⚠️ 注意',
+            'high': '🔴 危険',
+            'critical': '⛔ 非常に危険'
+        };
+        return labels[level] || level;
     }
 
     /**

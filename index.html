@@ -300,6 +300,18 @@
                     <p>よく使うコマンドをカテゴリ別に検索</p>
                 </div>
 
+                <!-- Sub-tabs for Reference -->
+                <div class="reference-tabs">
+                    <button class="reference-tab active" data-ref-tab="command-ref">
+                        📖 コマンドリファレンス
+                    </button>
+                    <button class="reference-tab" data-ref-tab="reverse-lookup">
+                        🔍 逆引きリファレンス
+                    </button>
+                </div>
+
+                <!-- Command Reference Content -->
+                <div id="command-ref" class="reference-tab-content active">
                 <div class="reference-section">
                     <div class="search-box">
                         <input
@@ -343,6 +355,43 @@
                         <!-- Reference content will be dynamically inserted here -->
                     </div>
                 </div>
+                </div>
+
+                <!-- Reverse Lookup Content -->
+                <div id="reverse-lookup" class="reference-tab-content">
+                    <div class="reverse-lookup-section">
+                        <div class="search-box">
+                            <input
+                                type="text"
+                                id="reverseLookupSearch"
+                                class="search-input"
+                                placeholder="やりたいことを検索... (例: コミットを取り消したい)"
+                            >
+                            <span class="search-icon">🔍</span>
+                        </div>
+
+                        <!-- Category Filter for Reverse Lookup -->
+                        <div class="filter-section">
+                            <div class="filter-group">
+                                <h4>📂 カテゴリで絞り込み</h4>
+                                <div class="filter-buttons" id="reverseCategoryFilters">
+                                    <button class="filter-btn active" data-reverse-category="all">すべて</button>
+                                    <button class="filter-btn" data-reverse-category="undo">↩️ 取り消し</button>
+                                    <button class="filter-btn" data-reverse-category="fix">🔧 修正</button>
+                                    <button class="filter-btn" data-reverse-category="info">🔍 情報確認</button>
+                                    <button class="filter-btn" data-reverse-category="cleanup">🧹 整理</button>
+                                    <button class="filter-btn" data-reverse-category="sync">🔄 同期</button>
+                                    <button class="filter-btn" data-reverse-category="branch">🌿 ブランチ</button>
+                                    <button class="filter-btn" data-reverse-category="github">🐙 GitHub</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="reverseLookupContent" class="reverse-lookup-content">
+                            <!-- Reverse lookup content will be dynamically inserted here -->
+                        </div>
+                    </div>
+                </div>
             </section>
         </main>
 
@@ -366,6 +415,7 @@
     <script src="js/command-analyzer.js"></script>
     <script src="js/wizard-data.js"></script>
     <script src="js/git-github-concepts.js"></script>
+    <script src="js/reverse-lookup.js"></script>
     <script src="js/app.js"></script>
 
     <!-- Service Worker Registration -->
