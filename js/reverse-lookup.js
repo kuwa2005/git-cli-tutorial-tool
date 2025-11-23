@@ -481,6 +481,125 @@ const ReverseLookupDatabase = {
                     dangerLevel: 'safe'
                 }
             ]
+        },
+
+        // GitHub連携
+        {
+            id: 'clone-github-repo',
+            category: 'github',
+            task: 'GitHubのリポジトリをローカルにクローンしたい',
+            keywords: ['クローン', 'GitHub', 'ダウンロード', 'ローカル'],
+            solutions: [
+                {
+                    title: 'HTTPSでクローン（推奨）',
+                    commands: [
+                        { cmd: 'git clone https://github.com/owner/repo.git', desc: 'HTTPSプロトコルでクローン' },
+                        { cmd: 'git clone https://github.com/owner/repo.git my-folder', desc: 'ディレクトリ名を指定してクローン' }
+                    ],
+                    when: '通常のクローン（認証はGitHub CLIまたはトークンで）',
+                    dangerLevel: 'safe'
+                },
+                {
+                    title: 'SSHでクローン',
+                    commands: [
+                        { cmd: 'git clone git@github.com:owner/repo.git', desc: 'SSHキーを使ってクローン' }
+                    ],
+                    when: 'SSHキーを設定済みの場合',
+                    dangerLevel: 'safe'
+                }
+            ]
+        },
+        {
+            id: 'push-local-changes',
+            category: 'github',
+            task: 'ローカルで変更したファイルをGitHubにプッシュしたい（2回目以降）',
+            keywords: ['プッシュ', 'ローカル', '変更', 'アップロード', '2回目'],
+            solutions: [
+                {
+                    title: '標準的なワークフロー（推奨）',
+                    commands: [
+                        { cmd: 'git status', desc: '1. 変更されたファイルを確認' },
+                        { cmd: 'git pull origin main', desc: '2. 最新の変更を取得（コンフリクト防止）' },
+                        { cmd: 'git add .', desc: '3. すべての変更をステージング' },
+                        { cmd: 'git commit -m "変更内容の説明"', desc: '4. コミットを作成' },
+                        { cmd: 'git push origin main', desc: '5. GitHubにプッシュ' }
+                    ],
+                    when: 'Claude Codeで編集→ローカルPCで実行確認→変更をプッシュする場合',
+                    dangerLevel: 'safe'
+                },
+                {
+                    title: '一連の操作をまとめて実行',
+                    commands: [
+                        { cmd: 'git add . && git commit -m "Update files" && git push origin main', desc: 'ステージング→コミット→プッシュを一度に実行' }
+                    ],
+                    when: '変更内容を確認済みで、素早くプッシュしたい場合',
+                    dangerLevel: 'safe',
+                    warning: '⚠️ 実行前に git status で変更内容を確認することを推奨'
+                }
+            ]
+        },
+        {
+            id: 'check-before-push',
+            category: 'github',
+            task: 'プッシュする前に変更内容を確認したい',
+            keywords: ['確認', 'プッシュ', '変更', 'レビュー'],
+            solutions: [
+                {
+                    title: '変更内容の確認手順',
+                    commands: [
+                        { cmd: 'git status', desc: '変更されたファイル一覧を表示' },
+                        { cmd: 'git diff', desc: 'まだステージングされていない変更を表示' },
+                        { cmd: 'git diff --staged', desc: 'ステージング済みの変更を表示' },
+                        { cmd: 'git log --oneline -5', desc: '最近のコミット5件を表示' }
+                    ],
+                    dangerLevel: 'safe'
+                }
+            ]
+        },
+        {
+            id: 'first-time-setup-after-clone',
+            category: 'github',
+            task: 'クローン後、初めて変更をプッシュする準備をしたい',
+            keywords: ['クローン後', '初回', 'セットアップ', '設定'],
+            solutions: [
+                {
+                    title: '初回セットアップ手順',
+                    commands: [
+                        { cmd: 'git config user.name "Your Name"', desc: 'ユーザー名を設定' },
+                        { cmd: 'git config user.email "your.email@example.com"', desc: 'メールアドレスを設定' },
+                        { cmd: 'git remote -v', desc: 'リモートリポジトリの設定を確認' }
+                    ],
+                    when: 'クローン後、初めての変更をプッシュする前',
+                    dangerLevel: 'safe'
+                }
+            ]
+        },
+        {
+            id: 'common-push-issues',
+            category: 'github',
+            task: 'プッシュがrejectedされた（拒否された）',
+            keywords: ['rejected', 'エラー', 'プッシュ失敗', '拒否'],
+            solutions: [
+                {
+                    title: '最新の変更を取得してからプッシュ',
+                    commands: [
+                        { cmd: 'git pull origin main', desc: 'リモートの最新の変更を取得' },
+                        { cmd: 'git push origin main', desc: '再度プッシュ' }
+                    ],
+                    when: '他の人がプッシュした後で、ローカルが古い場合',
+                    dangerLevel: 'safe'
+                },
+                {
+                    title: 'リベースしてからプッシュ',
+                    commands: [
+                        { cmd: 'git pull --rebase origin main', desc: 'リモートの変更を取り込んでリベース' },
+                        { cmd: 'git push origin main', desc: '再度プッシュ' }
+                    ],
+                    when: 'コミット履歴を綺麗に保ちたい場合',
+                    dangerLevel: 'warning',
+                    warning: '⚠️ コンフリクトが発生する可能性があります'
+                }
+            ]
         }
     ]
 };

@@ -216,7 +216,9 @@
                                 <option value="issue-list">Issueを一覧表示</option>
                             </optgroup>
                             <optgroup label="🔗 Git & GitHub連携">
+                                <option value="github-to-local">GitHubからローカルへクローン</option>
                                 <option value="local-to-github">ローカルリポジトリをGitHubへ</option>
+                                <option value="local-changes-push">ローカルの変更をプッシュ（2回目以降）</option>
                                 <option value="setup-upstream">フォーク元を追跡設定</option>
                                 <option value="sync-with-upstream">フォーク元から更新取得</option>
                                 <option value="create-pr-from-fork">フォークからPR作成</option>
@@ -361,16 +363,24 @@
                             <div class="scenario-category">
                                 <h4>🔗 Git & GitHub連携</h4>
                                 <div class="scenario-buttons">
+                                    <button class="scenario-btn" data-scenario="github-to-local">
+                                        <span class="btn-icon">📥</span>
+                                        <span class="btn-label">GitHub→ローカル</span>
+                                    </button>
                                     <button class="scenario-btn" data-scenario="local-to-github">
                                         <span class="btn-icon">☁️</span>
-                                        <span class="btn-label">GitHubへ</span>
+                                        <span class="btn-label">ローカル→GitHub</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="local-changes-push">
+                                        <span class="btn-icon">🔄</span>
+                                        <span class="btn-label">変更をプッシュ</span>
                                     </button>
                                     <button class="scenario-btn" data-scenario="setup-upstream">
                                         <span class="btn-icon">⬆️</span>
                                         <span class="btn-label">Upstream設定</span>
                                     </button>
                                     <button class="scenario-btn" data-scenario="sync-with-upstream">
-                                        <span class="btn-icon">🔄</span>
+                                        <span class="btn-icon">🔁</span>
                                         <span class="btn-label">Upstream同期</span>
                                     </button>
                                     <button class="scenario-btn" data-scenario="create-pr-from-fork">

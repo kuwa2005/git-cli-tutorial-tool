@@ -526,6 +526,15 @@ class GitWizardApp {
                 { name: 'sourceBranch', label: 'あなたのブランチ', type: 'text', placeholder: 'feature-branch', required: true },
                 { name: 'targetBranch', label: 'マージ先ブランチ', type: 'text', placeholder: 'main', default: 'main' },
                 { name: 'upstreamRepo', label: 'フォーク元リポジトリ', type: 'text', placeholder: 'owner/repo', required: true }
+            ],
+            'github-to-local': [
+                { name: 'repoUrl', label: 'GitHubリポジトリURL', type: 'text', placeholder: 'https://github.com/owner/repo.git', required: true },
+                { name: 'localDir', label: 'ローカルディレクトリ名（省略可）', type: 'text', placeholder: 'my-project' }
+            ],
+            'local-changes-push': [
+                { name: 'files', label: '変更したファイル（. で全て）', type: 'text', placeholder: '.', default: '.' },
+                { name: 'commitMessage', label: 'コミットメッセージ', type: 'text', placeholder: 'Update files', required: true },
+                { name: 'branch', label: 'プッシュ先ブランチ', type: 'text', placeholder: 'main', default: 'main' }
             ]
         };
 
@@ -693,6 +702,17 @@ class GitWizardApp {
             'create-pr-from-fork': () => {
                 const target = data.targetBranch || 'main';
                 return `git push origin ${data.sourceBranch} && gh pr create --repo ${data.upstreamRepo} --base ${target} --head ${data.sourceBranch}`;
+            },
+            'github-to-local': () => {
+                if (data.localDir) {
+                    return `git clone ${data.repoUrl} ${data.localDir}`;
+                } else {
+                    return `git clone ${data.repoUrl}`;
+                }
+            },
+            'local-changes-push': () => {
+                const branch = data.branch || 'main';
+                return `git add ${data.files} && git commit -m "${data.commitMessage}" && git push origin ${branch}`;
             }
         };
 
