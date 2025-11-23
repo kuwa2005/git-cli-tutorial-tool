@@ -27,7 +27,7 @@ const ReverseLookupDatabase = {
                 {
                     title: '変更を残してコミットだけ取り消す（推奨）',
                     commands: [
-                        { cmd: 'git reset --soft HEAD~1', desc: 'コミットを取り消すが、変更はステージングエリアに残る' }
+                        { cmd: 'git reset --soft HEAD~1', desc: '【状況】コミットメッセージを間違えた、またはコミットするのが早すぎた場合\n【実行すると】Gitの履歴から最後のコミット記録が削除されます。ただし、ファイルの変更内容はそのまま残り、「git add」した状態（ステージング済み）で保持されます\n【結果】ファイルは編集済みのまま、すぐに再コミットできる状態に戻ります。コミットメッセージを書き直したり、追加でファイルを修正してから改めてコミットできます' }
                     ],
                     when: 'まだプッシュしていない場合',
                     dangerLevel: 'safe'
@@ -35,7 +35,7 @@ const ReverseLookupDatabase = {
                 {
                     title: '変更もすべて取り消す',
                     commands: [
-                        { cmd: 'git reset --hard HEAD~1', desc: 'コミットと変更をすべて削除（復元不可）' }
+                        { cmd: 'git reset --hard HEAD~1', desc: '【状況】最後のコミット自体が不要で、変更内容も全部捨てたい場合\n【実行すると】Gitの履歴から最後のコミットが削除され、同時にファイルの変更内容も完全に削除されます。ファイルは1つ前のコミット時点の状態に完全に戻ります\n【結果】最後のコミットで変更した内容はすべて消えます。元に戻す方法はありません\n【例】間違って不要なファイルをコミットしてしまい、そのファイル自体が不要な場合' }
                     ],
                     when: '変更が不要な場合',
                     dangerLevel: 'high',
@@ -52,8 +52,8 @@ const ReverseLookupDatabase = {
                 {
                     title: '新しいコミットで打ち消す（推奨）',
                     commands: [
-                        { cmd: 'git revert HEAD', desc: '最後のコミットを打ち消す新しいコミットを作成' },
-                        { cmd: 'git push origin main', desc: '打ち消しコミットをプッシュ' }
+                        { cmd: 'git revert HEAD', desc: '【状況】既にGitHubにプッシュしたコミットに問題があった場合\n【実行すると】問題のあるコミットはそのまま履歴に残しつつ、その変更内容を「逆向き」に打ち消す新しいコミットを自動作成します\n【結果】ファイルは問題のコミット前の状態に戻りますが、履歴には「コミットA→それを打ち消すコミットB」という記録が残ります。他のメンバーの作業に影響を与えません\n【例】バグのあるコードをコミット→revertで修正前に戻す→修正版を新たにコミット' },
+                        { cmd: 'git push origin main', desc: '【実行すると】打ち消しコミットをGitHubに送信します\n【結果】チーム全員が安全に最新の状態を取得できます' }
                     ],
                     when: '履歴を保持したい場合（チーム開発では必須）',
                     dangerLevel: 'safe'
@@ -61,8 +61,8 @@ const ReverseLookupDatabase = {
                 {
                     title: '強制的に履歴を書き換える',
                     commands: [
-                        { cmd: 'git reset --hard HEAD~1', desc: 'ローカルでコミットを削除' },
-                        { cmd: 'git push --force origin main', desc: 'リモートに強制プッシュ' }
+                        { cmd: 'git reset --hard HEAD~1', desc: '【状況】完全に個人のリポジトリで、誰も影響を受けない場合のみ\n【実行すると】ローカルの履歴から問題のコミットを完全に削除します' },
+                        { cmd: 'git push --force origin main', desc: '【実行すると】GitHub上の履歴も強制的に書き換えます\n【結果】問題のコミットは履歴から消えます。しかし他の人が既にそのコミットを取得していた場合、その人のリポジトリと矛盾が生じて深刻な問題になります\n【危険性】チームメンバーの作業が壊れる可能性があります' }
                     ],
                     when: '個人リポジトリで他に影響がない場合のみ',
                     dangerLevel: 'critical',
@@ -79,8 +79,8 @@ const ReverseLookupDatabase = {
                 {
                     title: 'ステージングを解除',
                     commands: [
-                        { cmd: 'git restore --staged <file>', desc: '特定のファイルのステージングを解除' },
-                        { cmd: 'git restore --staged .', desc: 'すべてのファイルのステージングを解除' }
+                        { cmd: 'git restore --staged <file>', desc: '【状況】「git add」でファイルをステージングしたけど、やっぱりコミットしたくない場合\n【実行すると】指定したファイルをステージングエリアから外します。ファイル自体の変更内容はそのまま残ります\n【結果】ファイルは「変更済みだけどステージングされていない」状態に戻ります。git statusで見ると赤色で表示されます\n【例】app.jsとtest.jsを間違えて両方addしたが、app.jsだけコミットしたい→test.jsをrestoreで外す' },
+                        { cmd: 'git restore --staged .', desc: '【実行すると】すべてのステージング済みファイルをまとめてステージングエリアから外します\n【結果】すべてのファイルが「変更はあるがステージングされていない」状態に戻ります。ファイルの編集内容は保持されます' }
                     ],
                     when: 'ファイルは変更したまま、ステージングだけ解除したい',
                     dangerLevel: 'safe'
@@ -98,7 +98,7 @@ const ReverseLookupDatabase = {
                 {
                     title: '最後のコミットメッセージを修正（未プッシュ）',
                     commands: [
-                        { cmd: 'git commit --amend -m "新しいメッセージ"', desc: '最後のコミットメッセージを書き換える' }
+                        { cmd: 'git commit --amend -m "新しいメッセージ"', desc: '【状況】コミットメッセージにtypoがあった、説明が不十分だった場合\n【実行すると】最後のコミットのメッセージだけを新しいものに書き換えます。ファイルの変更内容やコミット時刻は変わりません\n【結果】git logで見たとき、最後のコミットメッセージが新しい内容に変わっています。まだプッシュしていないので、GitHub上には何も影響ありません\n【例】「Fix bug」→「Fix login validation bug (#123)」のように詳しく書き直す' }
                     ],
                     when: 'まだプッシュしていない場合',
                     dangerLevel: 'safe'
@@ -106,8 +106,8 @@ const ReverseLookupDatabase = {
                 {
                     title: 'プッシュ済みのメッセージを修正',
                     commands: [
-                        { cmd: 'git commit --amend -m "新しいメッセージ"', desc: 'ローカルでメッセージを修正' },
-                        { cmd: 'git push --force-with-lease origin main', desc: '安全な強制プッシュ' }
+                        { cmd: 'git commit --amend -m "新しいメッセージ"', desc: '【実行すると】ローカルで最後のコミットメッセージを書き換えます' },
+                        { cmd: 'git push --force-with-lease origin main', desc: '【実行すると】書き換えたコミットをGitHubに強制的に送ります。--force-with-leaseは、他の人が先にプッシュしていた場合は失敗するので、完全な--forceより安全です\n【結果】GitHub上のコミットメッセージも書き換わります\n【注意】他の人がこのブランチで作業している場合、その人の履歴と食い違いが生じます' }
                     ],
                     when: '個人ブランチの場合のみ',
                     dangerLevel: 'warning',
@@ -124,8 +124,8 @@ const ReverseLookupDatabase = {
                 {
                     title: 'ファイルを追加してコミットを修正',
                     commands: [
-                        { cmd: 'git add forgotten-file.txt', desc: '忘れたファイルをステージング' },
-                        { cmd: 'git commit --amend --no-edit', desc: 'メッセージを変えずにコミットを修正' }
+                        { cmd: 'git add forgotten-file.txt', desc: '【状況】コミットした後に「しまった、このファイルも一緒にコミットするべきだった」と気づいた場合\n【実行すると】忘れていたファイルをステージングエリアに追加します' },
+                        { cmd: 'git commit --amend --no-edit', desc: '【実行すると】ステージングエリアにある内容（先ほど追加したファイル）を最後のコミットに統合します。--no-editオプションで、コミットメッセージはそのまま保持します\n【結果】最後のコミットに忘れていたファイルが含まれます。git logで見ると、まるで最初から一緒にコミットしていたように見えます\n【例】README.mdとindex.htmlを一緒にコミットしたかったのに、README.mdを忘れた→後からaddしてamendで統合' }
                     ],
                     when: 'まだプッシュしていない場合',
                     dangerLevel: 'safe'
@@ -518,11 +518,11 @@ const ReverseLookupDatabase = {
                 {
                     title: '標準的なワークフロー（推奨）',
                     commands: [
-                        { cmd: 'git status', desc: '1. 変更されたファイルを確認' },
-                        { cmd: 'git pull origin main', desc: '2. 最新の変更を取得（コンフリクト防止）' },
-                        { cmd: 'git add .', desc: '3. すべての変更をステージング' },
-                        { cmd: 'git commit -m "変更内容の説明"', desc: '4. コミットを作成' },
-                        { cmd: 'git push origin main', desc: '5. GitHubにプッシュ' }
+                        { cmd: 'git status', desc: '【実行すると】どのファイルが変更されているか、ステージングされているか確認できます\n【確認内容】赤字＝変更あるがステージングされていない、緑字＝ステージング済み' },
+                        { cmd: 'git pull origin main', desc: '【なぜ必要？】他の場所（例：Claude Code）で変更してプッシュした内容を取得します。これをしないと、古い状態に上書きしてしまう危険があります\n【実行すると】GitHubの最新の状態とローカルを同期します' },
+                        { cmd: 'git add .', desc: '【実行すると】現在のディレクトリのすべての変更ファイルをステージングエリアに追加します（コミット対象として登録）\n【結果】git statusで見ると、ファイルが緑色で表示されます' },
+                        { cmd: 'git commit -m "変更内容の説明"', desc: '【実行すると】ステージングした変更を1つのコミット（記録ポイント）として保存します\n【例】"Add user authentication feature" "Fix bug in login form"など具体的に書く' },
+                        { cmd: 'git push origin main', desc: '【実行すると】ローカルで作成したコミットをGitHubに送信します\n【結果】GitHub上のリポジトリが更新され、他の環境からも変更が見えるようになります' }
                     ],
                     when: 'Claude Codeで編集→ローカルPCで実行確認→変更をプッシュする場合',
                     dangerLevel: 'safe'
