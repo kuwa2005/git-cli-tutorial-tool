@@ -100,6 +100,9 @@ const ReverseLookupDatabase = {
             category: 'fix',
             task: 'コミットメッセージを修正したい',
             keywords: ['コミットメッセージ', '修正', '変更', 'amend'],
+            prerequisites: '💡 どのコミットを修正するか確認するには「git log --oneline -5」で最近のコミット履歴を見ましょう。',
+            relatedTasks: ['undo-last-commit', 'add-to-last-commit', 'check-commit-history'],
+            nextSteps: '✨ メッセージ修正後、まだプッシュしていなければそのままプッシュできます。既にプッシュ済みの場合は、チームメンバーへの影響を考慮してください。',
             solutions: [
                 {
                     title: '最後のコミットメッセージを修正（未プッシュ）',
@@ -126,6 +129,9 @@ const ReverseLookupDatabase = {
             category: 'fix',
             task: '最後のコミットに追加のファイルを含めたい',
             keywords: ['コミット', '追加', 'ファイル', '忘れた'],
+            prerequisites: '💡 どのファイルが最後のコミットに含まれているか確認するには「git show --name-only」を実行しましょう。',
+            relatedTasks: ['fix-commit-message', 'undo-last-commit', 'check-status'],
+            nextSteps: '✨ ファイルを追加したら、必要に応じてコミットメッセージも修正できます（--amendに-mオプションを追加）。',
             solutions: [
                 {
                     title: 'ファイルを追加してコミットを修正',
@@ -145,6 +151,9 @@ const ReverseLookupDatabase = {
             category: 'info',
             task: '現在の変更状況を確認したい',
             keywords: ['状態', '確認', 'ステータス', '変更'],
+            prerequisites: '💡 現在どのブランチにいるか、どのディレクトリにいるかを把握しておきましょう。',
+            relatedTasks: ['check-commit-history', 'check-diff', 'undo-staging'],
+            nextSteps: '✨ 変更内容を確認したら、「git add」でステージング→「git commit」でコミットの流れです。詳しい差分は「git diff」で確認できます。',
             solutions: [
                 {
                     title: '基本的な状態確認',
@@ -161,6 +170,9 @@ const ReverseLookupDatabase = {
             category: 'info',
             task: '何が変更されたか詳しく見たい',
             keywords: ['差分', '変更内容', 'diff'],
+            prerequisites: '💡 変更されているファイルがあるか「git status」で確認してから実行すると分かりやすいです。',
+            relatedTasks: ['check-status', 'undo-staging', 'check-commit-history'],
+            nextSteps: '✨ 変更内容を確認して問題なければ「git add」→「git commit」でコミットしましょう。修正が必要ならファイルを編集してください。',
             solutions: [
                 {
                     title: '変更内容を確認',
@@ -178,6 +190,9 @@ const ReverseLookupDatabase = {
             category: 'info',
             task: 'コミット履歴を確認したい',
             keywords: ['履歴', 'ログ', 'history', 'log'],
+            prerequisites: '💡 コミット履歴は「最新が上、古いのが下」に表示されます。ハッシュ値（英数字の文字列）が各コミットの識別子です。',
+            relatedTasks: ['undo-last-commit', 'fix-commit-message', 'check-status'],
+            nextSteps: '✨ 履歴を見て問題を見つけたら、「コミットを取り消したい」や「コミットメッセージを修正したい」を参照してください。',
             solutions: [
                 {
                     title: 'コミット履歴の表示',
@@ -310,6 +325,9 @@ const ReverseLookupDatabase = {
             category: 'sync',
             task: 'リモートの最新状態を取得したい',
             keywords: ['pull', '取得', '最新', '更新'],
+            prerequisites: '💡 プル前に「git status」で未コミットの変更がないか確認しましょう。変更がある場合は先にコミットしてください。',
+            relatedTasks: ['sync-fork', 'check-status', 'resolve-conflicts'],
+            nextSteps: '✨ プル後にコンフリクト（競合）が発生した場合は、ファイルを編集して解決し、「git add」→「git commit」で完了します。',
             solutions: [
                 {
                     title: '最新の変更を取得してマージ',
@@ -336,6 +354,9 @@ const ReverseLookupDatabase = {
             category: 'branch',
             task: '新しいブランチを作成したい',
             keywords: ['ブランチ', '作成', '新規'],
+            prerequisites: '💡 現在どのブランチにいるか「git branch」で確認しましょう。新しいブランチは現在のブランチから分岐します。',
+            relatedTasks: ['switch-branch', 'check-status', 'merge-branch'],
+            nextSteps: '✨ ブランチを作成したら、そのブランチで作業を進めて、完了したらmainにマージします。リモートにプッシュする場合は「git push -u origin ブランチ名」を使います。',
             solutions: [
                 {
                     title: 'ブランチを作成して切り替え',
@@ -352,6 +373,9 @@ const ReverseLookupDatabase = {
             category: 'branch',
             task: 'ブランチを切り替えたい',
             keywords: ['ブランチ', '切り替え', 'checkout', 'switch'],
+            prerequisites: '💡 切り替え前に「git status」で未コミットの変更がないか確認しましょう。変更がある場合は先にコミットするか「git stash」で退避してください。',
+            relatedTasks: ['stash-changes', 'create-branch', 'check-status'],
+            nextSteps: '✨ ブランチを切り替えたら、「git log」で履歴を確認したり、「git status」で状態を確認してから作業を始めましょう。',
             solutions: [
                 {
                     title: 'ブランチの切り替え',
@@ -501,6 +525,9 @@ const ReverseLookupDatabase = {
             category: 'github',
             task: 'GitHubのリポジトリをローカルにクローンしたい',
             keywords: ['クローン', 'GitHub', 'ダウンロード', 'ローカル'],
+            prerequisites: '💡 GitHubのリポジトリページで「Code」ボタンをクリックすると、クローン用のURLが表示されます（HTTPSまたはSSH）。',
+            relatedTasks: ['push-local-changes', 'check-remote', 'setup-upstream'],
+            nextSteps: '✨ クローン後は、作成されたフォルダに移動（cd コマンド）してから作業を始めましょう。「git status」で状態を確認できます。',
             solutions: [
                 {
                     title: 'HTTPSでクローン（推奨）',
