@@ -874,21 +874,26 @@ class GitWizardApp {
                 return;
             }
 
-            // カテゴリフィルター（GitHub CLIはremoteカテゴリとして扱う）
-            if (this.activeCategory !== 'all' && this.activeCategory !== 'remote') {
+            // カテゴリフィルター（GitHub CLIはgithubカテゴリとして扱う）
+            if (this.activeCategory !== 'all' && this.activeCategory !== 'github') {
                 return;
             }
 
-            // 危険度フィルター（GitHub CLIは基本的に安全）
-            if (this.activeDanger !== 'all' && this.activeDanger !== 'safe') {
+            // 危険度フィルター
+            if (this.activeDanger !== 'all' && info.dangerLevel !== this.activeDanger) {
                 return;
             }
 
             html += `
-                <div class="reference-card" data-command="gh ${cmd}" data-category="remote" data-danger="safe">
+                <div class="reference-card" data-command="gh ${cmd}" data-category="github" data-danger="${info.dangerLevel}">
                     <h4>🐙 gh ${cmd}</h4>
                     <p>${info.description}</p>
+                    ${info.explanation ? `<p class="command-explanation">${this.escapeHtml(info.explanation)}</p>` : ''}
+                    <p><strong>危険度:</strong> ${CommandDatabase.dangerLevels[info.dangerLevel].icon} ${CommandDatabase.dangerLevels[info.dangerLevel].label}</p>
+                    ${info.prerequisites ? `<div class="task-prerequisites">${this.escapeHtml(info.prerequisites)}</div>` : ''}
                     ${info.examples ? `<p><strong>例:</strong> <code>${info.examples[0]}</code></p>` : ''}
+                    ${info.nextSteps ? `<div class="task-next-steps">${this.escapeHtml(info.nextSteps)}</div>` : ''}
+                    ${info.relatedCommands && info.relatedCommands.length > 0 ? this.renderRelatedCommands(info.relatedCommands, 'git') : ''}
                 </div>
             `;
             count++;

@@ -79,7 +79,10 @@ const CommandDatabase = {
                 'add': 'リモートを追加',
                 'remove': 'リモートを削除'
             },
-            explanation: 'origin, upstream などのリモートリポジトリの設定を確認できます。',
+            explanation: 'リモートリポジトリ（GitHub上のリポジトリなど）との接続設定を確認・管理します。origin=自分のリポジトリ、upstream=フォーク元のリポジトリを指すのが一般的です。git remote -vで現在の設定を確認でき、URLとともに表示されます。フォークしたリポジトリで作業する場合は、git remote add upstreamでフォーク元を追加すると、最新の変更を取り込めるようになります。',
+            prerequisites: '💡 クローンしたリポジトリには自動的にoriginが設定されています。「git remote -v」で現在の設定を確認できます。',
+            relatedCommands: ['clone', 'fetch', 'pull', 'push'],
+            nextSteps: '✨ リモート確認後は「git fetch」で変更を取得、「git pull」で統合、「git push」で送信できます。',
             examples: [
                 'git remote -v',
                 'git remote add upstream <url>'
@@ -352,7 +355,10 @@ const CommandDatabase = {
                 '--continue': 'リベースを続行',
                 '--abort': 'リベースを中止'
             },
-            explanation: 'コミットを整理したり、別のブランチに付け替えたりします。',
+            explanation: 'コミット履歴を整理したり、ベースとなるブランチを変更したりします。例えば、mainブランチの最新状態の上に自分のfeatureブランチのコミットを積み直すことができます。git mergeと違い、履歴が一直線になるため見やすくなりますが、既にプッシュ済みのコミットをrebaseすると他の人の作業に影響します。-iオプションの対話的リベースでコミットの順序変更、統合、削除ができます。',
+            prerequisites: '💡 rebase前に「git log」で履歴を確認、プッシュ済みのブランチではないことを確認してください。まだプッシュしていないローカルブランチでのみ使用が推奨されます。',
+            relatedCommands: ['merge', 'log', 'pull', 'push'],
+            nextSteps: '✨ rebase後は「git log」で履歴を確認、コンフリクトがあれば解決して「git rebase --continue」、中止したい場合は「git rebase --abort」を実行します。',
             examples: [
                 'git rebase main',
                 'git rebase -i HEAD~3'
@@ -392,7 +398,10 @@ const CommandDatabase = {
             options: {
                 '--bare': 'Bareリポジトリを作成'
             },
-            explanation: '現在のディレクトリをGitリポジトリとして初期化します。',
+            explanation: '現在のディレクトリを新しいGitリポジトリとして初期化します。.gitフォルダが作成され、バージョン管理が可能になります。既存のプロジェクトでGitを使い始める時、または新規プロジェクトを作る時に実行します。git init プロジェクト名を実行すると、新しいディレクトリが作成され、その中で初期化されます。初期化後すぐにファイルをaddしてコミットできます。',
+            prerequisites: '💡 Gitがインストールされている必要があります。プロジェクトのルートディレクトリで実行しましょう。',
+            relatedCommands: ['add', 'commit', 'remote', 'clone'],
+            nextSteps: '✨ 初期化したら「git add .」でファイルをステージング、「git commit」で最初のコミット、「gh repo create」でGitHubリポジトリを作成できます。',
             examples: [
                 'git init',
                 'git init プロジェクト名'
@@ -409,7 +418,10 @@ const CommandDatabase = {
                 '-n': 'ドライラン（削除されるファイルを表示）',
                 '-x': '.gitignoreされたファイルも削除'
             },
-            explanation: '未追跡のファイルを削除します。元に戻せません！',
+            explanation: 'Gitで追跡されていないファイル（git addしていないファイル）を削除します。ビルド生成物や一時ファイルを一掃したい時に使いますが、削除したファイルは完全に失われ復元できません！必ず-nオプションで削除対象を確認してから実行してください。-dオプションでディレクトリも削除、-xオプションで.gitignoreに書かれているファイルも削除されます。',
+            prerequisites: '💡 実行前に必ず「git clean -n」で削除対象のファイルを確認してください。重要なファイルが含まれていないか確認が必須です。',
+            relatedCommands: ['status', 'reset', 'stash'],
+            nextSteps: '✨ clean実行後は「git status」でクリーンな状態を確認できます。誤って削除した場合、復元はできません。',
             examples: [
                 'git clean -n',
                 'git clean -fd'
@@ -468,7 +480,10 @@ const CommandDatabase = {
                 '--body': 'PRの説明を指定',
                 '--web': 'ブラウザで開く'
             },
-            explanation: 'GitHub上でPull Requestの操作を行います。',
+            explanation: 'コマンドラインからGitHub上のPull Request（プルリクエスト）を作成・管理できます。gh pr createで新しいPRを作成、gh pr listで一覧表示、gh pr view 番号で詳細確認ができます。ブラウザを開かずにPRの作成からマージまで完結できるため、開発の流れが途切れません。--webオプションでブラウザで開くこともできます。',
+            prerequisites: '💡 GitHubリポジトリで作業している必要があります。「gh auth login」で認証済みであることを確認してください。PR作成前に変更をプッシュしておきましょう。',
+            relatedCommands: ['push', 'branch', 'merge'],
+            nextSteps: '✨ PR作成後は「gh pr view」で状態確認、レビュー完了後は「gh pr merge」でマージできます。',
             examples: [
                 'gh pr create',
                 'gh pr list',
@@ -492,7 +507,10 @@ const CommandDatabase = {
                 '--label': 'ラベルを追加',
                 '--assignee': '担当者を指定'
             },
-            explanation: 'GitHub上でIssueの操作を行います。',
+            explanation: 'コマンドラインからGitHub Issue（課題管理）を作成・管理できます。バグ報告、機能リクエスト、タスク管理などに使います。gh issue createで新しいIssueを作成、gh issue listで一覧表示、gh issue view 番号で詳細確認ができます。ラベルや担当者も設定でき、プロジェクト管理がターミナルから完結します。',
+            prerequisites: '💡 GitHubリポジトリで作業している必要があります。「gh auth login」で認証済みであることを確認してください。',
+            relatedCommands: ['pr'],
+            nextSteps: '✨ Issue作成後は「gh issue view」で状態確認、修正が完了したら「gh issue close」でクローズできます。Issueに対応するPRを作る場合は「gh pr create」を使います。',
             examples: [
                 'gh issue create',
                 'gh issue list',
@@ -514,7 +532,10 @@ const CommandDatabase = {
                 '--public': 'パブリックリポジトリとして作成',
                 '--private': 'プライベートリポジトリとして作成'
             },
-            explanation: 'GitHub上でリポジトリの操作を行います。',
+            explanation: 'コマンドラインからGitHubリポジトリを作成・管理できます。gh repo createでローカルプロジェクトから新しいGitHubリポジトリを作成、gh repo forkで他のリポジトリをフォーク、gh repo cloneでクローンできます。--publicでパブリック（公開）、--privateでプライベート（非公開）リポジトリとして作成されます。ブラウザを開かずにリポジトリ管理が完結します。',
+            prerequisites: '💡 「gh auth login」でGitHub認証を完了している必要があります。リポジトリ作成の場合はローカルにgit initされたディレクトリで実行します。',
+            relatedCommands: ['init', 'clone', 'remote', 'push'],
+            nextSteps: '✨ リポジトリ作成後は「git push -u origin main」で初回プッシュ、「gh pr create」でPull Requestを作成できます。',
             examples: [
                 'gh repo create',
                 'gh repo fork owner/repo',
