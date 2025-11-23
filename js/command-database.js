@@ -19,7 +19,7 @@ const CommandDatabase = {
                 '-b': 'ブランチ情報も表示',
                 '--branch': 'ブランチ情報も表示'
             },
-            explanation: 'どのファイルが変更されているか、ステージングされているか、コミット可能かを確認できます。',
+            explanation: '現在どのファイルが変更されているか、どのファイルがステージング済みか（git addされているか）を確認します。赤色=変更あるが未ステージング、緑色=ステージング済みでコミット可能、と色分けして表示されます。コミット前に必ず確認すると安全です。',
             examples: [
                 'git status',
                 'git status -s'
@@ -95,7 +95,7 @@ const CommandDatabase = {
                 '-p': '対話的にステージング',
                 '--patch': '対話的にステージング'
             },
-            explanation: 'コミットする前にファイルをステージングエリアに追加します。',
+            explanation: '変更したファイルを「次のコミットに含める」リストに追加します。これを「ステージングする」と言います。git addしたファイルだけがコミット対象になります。git add .で現在のフォルダの全ファイルをステージングできますが、不要なファイルまで含めないよう注意が必要です。',
             examples: [
                 'git add ファイル名',
                 'git add .',
@@ -113,7 +113,7 @@ const CommandDatabase = {
                 '--amend': '直前のコミットを修正',
                 '--no-verify': 'フックをスキップ（非推奨）'
             },
-            explanation: 'ステージングエリアの変更を確定してリポジトリに記録します。',
+            explanation: 'ステージングしたファイルの変更を1つの「セーブポイント」として保存します。-mオプションで変更内容を説明するメッセージを書きます（例："Fix login bug" "Add user profile page"）。コミットした内容はgit logで後から確認できます。コミットしただけではまだGitHubには反映されません（git pushが必要）。',
             examples: [
                 'git commit -m "コミットメッセージ"',
                 'git commit -am "変更をコミット"'
@@ -139,7 +139,7 @@ const CommandDatabase = {
                 '--all': 'すべてのブランチをプッシュ',
                 '--tags': 'タグもプッシュ'
             },
-            explanation: 'ローカルのコミットをリモートリポジトリに反映します。',
+            explanation: 'ローカルでコミットした変更をGitHubなどのリモートリポジトリに送信（アップロード）します。これによって初めて他の人や他の環境から変更が見えるようになります。origin=自分のリポジトリ、upstream=フォーク元を指します。通常はoriginにプッシュします。初回は-uオプションでブランチを紐付ける必要があります。',
             examples: [
                 'git push origin ブランチ名',
                 'git push -u origin feature-branch'
@@ -177,7 +177,7 @@ const CommandDatabase = {
                 '--ff-only': 'Fast-forwardのみ許可',
                 '--no-commit': 'マージをコミットしない'
             },
-            explanation: 'リモートの変更をローカルに取り込みます。fetchとmergeを同時に行います。',
+            explanation: 'GitHubなどリモートリポジトリの最新の変更をローカルに取得して、自動的に現在のブランチに統合（マージ）します。他の環境（Claude Codeなど）で変更してプッシュした内容を取り込む時に使います。プッシュする前に必ずpullしておくと、他の変更と衝突するリスクを減らせます。git fetch + git mergeを1コマンドで実行するのと同じです。',
             examples: [
                 'git pull origin main',
                 'git pull --rebase'
@@ -193,7 +193,7 @@ const CommandDatabase = {
                 '--prune': '削除されたブランチを整理',
                 '-p': '削除されたブランチを整理'
             },
-            explanation: 'リモートの最新状態を確認します。ローカルブランチは変更されません。',
+            explanation: 'リモートリポジトリの最新状態を取得しますが、ローカルのファイルには反映しません。「リモートで何が変更されたか確認してから、マージするか判断したい」という場合に使います。fetchした後、git logやgit diffで内容を確認してから、必要に応じてgit mergeで統合できます。pullより安全ですが手順が多いです。',
             examples: [
                 'git fetch origin',
                 'git fetch --all --prune'
@@ -289,7 +289,7 @@ const CommandDatabase = {
                 '--mixed': 'コミットとステージングを取り消し（デフォルト）',
                 '--hard': 'すべてを完全に取り消し（危険）'
             },
-            explanation: 'コミット履歴やステージング状態を変更します。',
+            explanation: 'コミットを取り消します。--softは「コミット記録だけ削除、ファイルはステージング済み状態で残す」、--mixedは「コミット記録とステージングを解除、ファイルは変更状態で残す」、--hardは「コミットもファイルの変更も完全削除」です。--hardは元に戻せないので要注意！コミットメッセージを書き直したいだけなら--softが安全。まだプッシュしていないコミットにのみ使うべきです。',
             examples: [
                 'git reset HEAD~1',
                 'git reset --soft HEAD~1',
@@ -336,7 +336,7 @@ const CommandDatabase = {
                 '--branch': '特定のブランチをクローン',
                 '-b': '特定のブランチをクローン'
             },
-            explanation: 'リモートリポジトリをローカルにコピーします。',
+            explanation: 'GitHubなどのリモートリポジトリをローカルPCに丸ごとダウンロードします。すべてのファイル、コミット履歴、ブランチがコピーされます。リポジトリ名と同じ名前のフォルダが自動作成され、その中にファイルが展開されます。originリモートも自動設定されるので、すぐにpull/pushできます。他人のプロジェクトで作業を始める時の最初のステップです。',
             examples: [
                 'git clone https://github.com/user/repo.git',
                 'git clone --depth 1 https://github.com/user/repo.git'
@@ -391,7 +391,7 @@ const CommandDatabase = {
                 'drop': '保存を削除',
                 'clear': 'すべての保存を削除'
             },
-            explanation: '作業中の変更を一時的に退避させます。',
+            explanation: '作業中の変更を一時的に「避難所」に保存して、作業ディレクトリをクリーンな状態に戻します。別のブランチに切り替える必要があるが、今の変更はまだコミットしたくない（中途半端な状態）という時に便利です。git stashで退避、git stash popで復元できます。複数の退避を保存でき、git stash listで一覧を見られます。コミットせずに変更を安全に保管できる仕組みです。',
             examples: [
                 'git stash',
                 'git stash pop',
