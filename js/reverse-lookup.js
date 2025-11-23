@@ -23,6 +23,8 @@ const ReverseLookupDatabase = {
             category: 'undo',
             task: '最後のコミットを取り消したい',
             keywords: ['コミット', '取り消し', '戻す', 'アンドゥ'],
+            prerequisites: '💡 最後のコミットが何か確認したい場合は、まず「git log --oneline」で履歴を見てみましょう。一番上に表示されるのが最後のコミットです。',
+            relatedTasks: ['check-commit-history', 'fix-commit-message', 'add-to-last-commit'],
             solutions: [
                 {
                     title: '変更を残してコミットだけ取り消す（推奨）',
@@ -48,6 +50,8 @@ const ReverseLookupDatabase = {
             category: 'undo',
             task: 'プッシュ済みのコミットを取り消したい',
             keywords: ['プッシュ', '取り消し', 'リモート', '公開'],
+            prerequisites: '💡 本当にプッシュ済みか確認するには「git log origin/main」でリモートの履歴を見ましょう。ローカルとリモートの差分は「git log origin/main..HEAD」で確認できます。',
+            relatedTasks: ['undo-last-commit', 'check-commit-history', 'common-push-issues'],
             solutions: [
                 {
                     title: '新しいコミットで打ち消す（推奨）',
@@ -75,6 +79,8 @@ const ReverseLookupDatabase = {
             category: 'undo',
             task: 'ステージングしたファイルを取り消したい',
             keywords: ['ステージング', 'add', '取り消し'],
+            prerequisites: '💡 何がステージングされているか確認するには「git status」を実行しましょう。緑色で表示されているファイルがステージング済みです。',
+            relatedTasks: ['check-status', 'undo-last-commit'],
             solutions: [
                 {
                     title: 'ステージングを解除',
@@ -274,6 +280,9 @@ const ReverseLookupDatabase = {
             category: 'sync',
             task: 'フォークを最新状態に同期したい',
             keywords: ['フォーク', '同期', 'upstream', '最新'],
+            prerequisites: '💡 upstreamリモートが設定されているか確認するには「git remote -v」を実行しましょう。upstreamが表示されない場合は先に追加が必要です。',
+            relatedTasks: ['add-remote', 'pull-latest', 'check-remote'],
+            nextSteps: '✨ 同期後は、自分のフィーチャーブランチをリベースして最新のmainに合わせることを検討しましょう。',
             solutions: [
                 {
                     title: 'GitHub CLI で同期（最も簡単）',
@@ -445,6 +454,9 @@ const ReverseLookupDatabase = {
             category: 'safety',
             task: '変更を一時的に退避したい',
             keywords: ['stash', '退避', '一時保存'],
+            prerequisites: '💡 退避する前に「git status」で現在の変更を確認しましょう。stashは未追跡（untracked）ファイルは保存しません。',
+            relatedTasks: ['check-status', 'switch-branch', 'create-branch'],
+            nextSteps: '✨ stash後にブランチ切り替えをして作業が終わったら、元のブランチに戻って「git stash pop」で変更を復元しましょう。',
             solutions: [
                 {
                     title: '変更の一時退避',
@@ -514,6 +526,9 @@ const ReverseLookupDatabase = {
             category: 'github',
             task: 'ローカルで変更したファイルをGitHubにプッシュしたい（2回目以降）',
             keywords: ['プッシュ', 'ローカル', '変更', 'アップロード', '2回目'],
+            prerequisites: '💡 初めてプッシュする場合は「初回セットアップ」を先に見てください。リモートの設定は「git remote -v」で確認できます。',
+            relatedTasks: ['first-time-setup-after-clone', 'check-before-push', 'check-remote', 'common-push-issues'],
+            nextSteps: '✨ プッシュ後は、GitHubのWebページで変更が反映されているか確認しましょう。問題があれば「プッシュがrejectedされた」を参照してください。',
             solutions: [
                 {
                     title: '標準的なワークフロー（推奨）',

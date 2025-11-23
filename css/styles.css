@@ -1524,6 +1524,74 @@ body.dark-theme .generated-command {
     font-size: 0.9rem;
 }
 
+/* Task prerequisites, next steps, and related tasks */
+.task-prerequisites,
+.task-next-steps {
+    background: linear-gradient(135deg, #e0f2fe 0%, #e0e7ff 100%);
+    border-left: 4px solid #3b82f6;
+    padding: var(--spacing-md);
+    margin: var(--spacing-md) 0;
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    color: #1e40af;
+}
+
+.task-next-steps {
+    background: linear-gradient(135deg, #d1fae5 0%, #dbeafe 100%);
+    border-left-color: #10b981;
+    color: #047857;
+}
+
+.task-related {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-md);
+    border-top: 2px solid var(--border-color);
+}
+
+.task-related h4 {
+    color: var(--text-primary);
+    font-size: 1rem;
+    margin: 0 0 var(--spacing-sm) 0;
+}
+
+.related-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.related-link-btn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.related-link-btn:hover {
+    background: var(--color-primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+}
+
+.highlight-flash {
+    animation: highlightPulse 2s ease-in-out;
+}
+
+@keyframes highlightPulse {
+    0%, 100% {
+        background: var(--bg-primary);
+    }
+    50% {
+        background: #fffbeb;
+        box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+    }
+}
+
 /* Dark mode adjustments for reverse lookup */
 .dark-theme .reverse-task-card {
     background: #2d3748;
@@ -1541,6 +1609,41 @@ body.dark-theme .generated-command {
     background: #744210;
     border-color: #b7791f;
     color: #fbbf24;
+}
+
+.dark-theme .task-prerequisites {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2d2f5e 100%);
+    color: #93c5fd;
+}
+
+.dark-theme .task-next-steps {
+    background: linear-gradient(135deg, #064e3b 0%, #1e3a5f 100%);
+    color: #6ee7b7;
+}
+
+.dark-theme .related-link-btn {
+    background: #374151;
+    border-color: #60a5fa;
+    color: #93c5fd;
+}
+
+.dark-theme .related-link-btn:hover {
+    background: #3b82f6;
+    color: white;
+}
+
+.dark-theme .highlight-flash {
+    animation: highlightPulseDark 2s ease-in-out;
+}
+
+@keyframes highlightPulseDark {
+    0%, 100% {
+        background: #2d3748;
+    }
+    50% {
+        background: #374151;
+        box-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+    }
 }
 
 @media (max-width: 768px) {

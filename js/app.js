@@ -922,13 +922,18 @@ class GitWizardApp {
             const category = ReverseLookupDatabase.categories[task.category];
 
             html += `
-                <div class="reverse-task-card">
+                <div class="reverse-task-card" data-task-id="${task.id}">
                     <h3>
                         ${category.icon}
                         ${this.escapeHtml(task.task)}
                     </h3>
                     <span class="task-category">${category.name}</span>
             `;
+
+            // 前提条件の表示
+            if (task.prerequisites) {
+                html += `<div class="task-prerequisites">${this.escapeHtml(task.prerequisites)}</div>`;
+            }
 
             task.solutions.forEach(solution => {
                 html += `
@@ -959,10 +964,48 @@ class GitWizardApp {
                 html += '</div>'; // reverse-solution
             });
 
+            // 次のステップの表示
+            if (task.nextSteps) {
+                html += `<div class="task-next-steps">${this.escapeHtml(task.nextSteps)}</div>`;
+            }
+
+            // 関連タスクの表示
+            if (task.relatedTasks && task.relatedTasks.length > 0) {
+                html += '<div class="task-related">';
+                html += '<h4>🔗 関連情報</h4>';
+                html += '<div class="related-links">';
+
+                task.relatedTasks.forEach(relatedId => {
+                    const relatedTask = tasks.find(t => t.id === relatedId);
+                    if (relatedTask) {
+                        html += `<button class="related-link-btn" data-task-id="${relatedId}">${relatedTask.task}</button>`;
+                    }
+                });
+
+                html += '</div></div>';
+            }
+
             html += '</div>'; // reverse-task-card
         });
 
         content.innerHTML = html || '<p>該当する情報が見つかりませんでした。</p>';
+
+        // 関連リンクのイベントリスナーを設定
+        content.querySelectorAll('.related-link-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const targetId = e.target.dataset.taskId;
+                const targetCard = content.querySelector(`[data-task-id="${targetId}"]`);
+                if (targetCard) {
+                    // スムーズにスクロール
+                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // 一時的にハイライト
+                    targetCard.classList.add('highlight-flash');
+                    setTimeout(() => {
+                        targetCard.classList.remove('highlight-flash');
+                    }, 2000);
+                }
+            });
+        });
     }
 
     /**
