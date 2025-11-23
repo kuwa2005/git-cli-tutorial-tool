@@ -55,6 +55,20 @@
                     </label>
                     <select id="sampleCommandSelect" class="select-input">
                         <option value="">-- サンプルを選択してください --</option>
+                        <optgroup label="📝 日常的によく使うコマンド">
+                            <option value="git add .">git add .（すべての変更をステージング）</option>
+                            <option value="git commit -m &quot;Update files&quot;">git commit -m "Update files"（コミット）</option>
+                            <option value="git push">git push（リモートへプッシュ）</option>
+                            <option value="git pull">git pull（リモートから取得）</option>
+                            <option value="git status -s">git status -s（状態を簡潔表示）</option>
+                            <option value="git log --oneline">git log --oneline（履歴を1行表示）</option>
+                            <option value="git diff --staged">git diff --staged（ステージング済み差分）</option>
+                            <option value="git stash">git stash（変更を一時保存）</option>
+                            <option value="git stash pop">git stash pop（一時保存を復元）</option>
+                            <option value="git switch -c feature/new-feature">git switch -c feature/new-feature（ブランチ作成・切替）</option>
+                            <option value="git branch -a">git branch -a（全ブランチ表示）</option>
+                            <option value="git remote -v">git remote -v（リモート確認）</option>
+                        </optgroup>
                         <optgroup label="⚠️ 危険なコマンド（警告が表示されます）">
                             <option value="git push upstream main">git push upstream main（Fork元への誤Push）</option>
                             <option value="git push --force origin main">git push --force origin main（強制プッシュ）</option>
