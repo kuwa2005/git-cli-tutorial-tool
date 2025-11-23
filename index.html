@@ -25,24 +25,24 @@
 
         <!-- Tab Navigation -->
         <nav class="tabs">
-            <button class="tab active" data-tab="analyzer">
-                📝 コマンド解析
-            </button>
-            <button class="tab" data-tab="builder">
-                🔨 コマンドビルダー
+            <button class="tab active" data-tab="reference">
+                📚 リファレンス
             </button>
             <button class="tab" data-tab="wizard">
                 🧙 ウィザード
             </button>
-            <button class="tab" data-tab="reference">
-                📚 リファレンス
+            <button class="tab" data-tab="builder">
+                🔨 コマンドビルダー
+            </button>
+            <button class="tab" data-tab="analyzer">
+                📝 コマンド解析
             </button>
         </nav>
 
         <!-- Content Sections -->
         <main class="main-content">
             <!-- Command Analyzer Section -->
-            <section id="analyzer" class="tab-content active">
+            <section id="analyzer" class="tab-content">
                 <div class="section-header">
                     <h2>コマンド解析・解説</h2>
                     <p>実行したいコマンドを貼り付けて、何が起こるか事前に確認しましょう</p>
@@ -458,7 +458,7 @@
             </section>
 
             <!-- Reference Section -->
-            <section id="reference" class="tab-content">
+            <section id="reference" class="tab-content active">
                 <div class="section-header">
                     <h2>コマンドリファレンス</h2>
                     <p>よく使うコマンドをカテゴリ別に検索</p>

@@ -6,7 +6,7 @@
 class GitWizardApp {
     constructor() {
         this.analyzer = new CommandAnalyzer(CommandDatabase);
-        this.currentTab = 'analyzer';
+        this.currentTab = 'reference';
         this.settings = this.loadSettings();
         this.currentWizard = null;
         this.currentStep = 0;
