@@ -1559,3 +1559,119 @@ body.dark-theme .generated-command {
         border-bottom: 1px solid var(--border-color);
     }
 }
+
+/* =====================================
+   Visual Scenario Selector
+   ===================================== */
+.visual-selector-section {
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: var(--radius-lg);
+    color: white;
+}
+
+.visual-selector-section h3 {
+    margin: 0 0 var(--spacing-sm) 0;
+    color: white;
+}
+
+.visual-selector-section .section-hint {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: var(--spacing-lg);
+}
+
+.scenario-categories {
+    display: grid;
+    gap: var(--spacing-lg);
+}
+
+.scenario-category {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.scenario-category h4 {
+    margin: 0 0 var(--spacing-md) 0;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.scenario-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: var(--spacing-sm);
+}
+
+.scenario-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md);
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-md);
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    min-height: 80px;
+}
+
+.scenario-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.scenario-btn:active {
+    transform: translateY(0);
+}
+
+.scenario-btn .btn-icon {
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.scenario-btn .btn-label {
+    text-align: center;
+    line-height: 1.2;
+}
+
+.scenario-btn.selected {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: white;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+/* Dark theme adjustments for visual selector */
+.dark-theme .visual-selector-section {
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+}
+
+/* Mobile adjustments for visual selector */
+@media (max-width: 768px) {
+    .scenario-buttons {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    .scenario-btn {
+        min-height: 70px;
+        padding: var(--spacing-sm);
+    }
+
+    .scenario-btn .btn-icon {
+        font-size: 1.5rem;
+    }
+
+    .scenario-btn .btn-label {
+        font-size: 0.85rem;
+    }
+}

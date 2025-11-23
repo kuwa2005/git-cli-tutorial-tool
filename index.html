@@ -223,6 +223,164 @@
                             </optgroup>
                         </select>
                     </div>
+                    </div>
+
+                    <!-- Visual Button Selection (新機能) -->
+                    <div class="visual-selector-section">
+                        <h3>🎯 ビジュアル選択</h3>
+                        <p class="section-hint">カテゴリから直感的に選択</p>
+
+                        <div class="scenario-categories">
+                            <!-- リポジトリ操作 -->
+                            <div class="scenario-category">
+                                <h4>📁 リポジトリ操作</h4>
+                                <div class="scenario-buttons">
+                                    <button class="scenario-btn" data-scenario="init">
+                                        <span class="btn-icon">✨</span>
+                                        <span class="btn-label">新規作成</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="clone">
+                                        <span class="btn-icon">📥</span>
+                                        <span class="btn-label">クローン</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="fork">
+                                        <span class="btn-icon">🍴</span>
+                                        <span class="btn-label">フォーク</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 変更の保存 -->
+                            <div class="scenario-category">
+                                <h4>💾 変更の保存</h4>
+                                <div class="scenario-buttons">
+                                    <button class="scenario-btn" data-scenario="add">
+                                        <span class="btn-icon">📦</span>
+                                        <span class="btn-label">ステージング</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="commit">
+                                        <span class="btn-icon">💾</span>
+                                        <span class="btn-label">コミット</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="push">
+                                        <span class="btn-icon">📤</span>
+                                        <span class="btn-label">プッシュ</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ブランチ操作 -->
+                            <div class="scenario-category">
+                                <h4>🌿 ブランチ操作</h4>
+                                <div class="scenario-buttons">
+                                    <button class="scenario-btn" data-scenario="branch-create">
+                                        <span class="btn-icon">➕</span>
+                                        <span class="btn-label">作成</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="branch-switch">
+                                        <span class="btn-icon">🔄</span>
+                                        <span class="btn-label">切り替え</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="branch-delete">
+                                        <span class="btn-icon">🗑️</span>
+                                        <span class="btn-label">削除</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="merge">
+                                        <span class="btn-icon">🔀</span>
+                                        <span class="btn-label">マージ</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 同期・更新 -->
+                            <div class="scenario-category">
+                                <h4>🔄 同期・更新</h4>
+                                <div class="scenario-buttons">
+                                    <button class="scenario-btn" data-scenario="pull">
+                                        <span class="btn-icon">⬇️</span>
+                                        <span class="btn-label">Pull</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="fetch">
+                                        <span class="btn-icon">📡</span>
+                                        <span class="btn-label">Fetch</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="sync-fork">
+                                        <span class="btn-icon">🔁</span>
+                                        <span class="btn-label">Fork同期</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 確認・調査 -->
+                            <div class="scenario-category">
+                                <h4>🔍 確認・調査</h4>
+                                <div class="scenario-buttons">
+                                    <button class="scenario-btn" data-scenario="status">
+                                        <span class="btn-icon">📊</span>
+                                        <span class="btn-label">Status</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="log">
+                                        <span class="btn-icon">📜</span>
+                                        <span class="btn-label">Log</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="diff">
+                                        <span class="btn-icon">🔎</span>
+                                        <span class="btn-label">Diff</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="remote">
+                                        <span class="btn-icon">🌐</span>
+                                        <span class="btn-label">Remote</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- GitHub操作 -->
+                            <div class="scenario-category">
+                                <h4>🎯 GitHub操作</h4>
+                                <div class="scenario-buttons">
+                                    <button class="scenario-btn" data-scenario="pr-create">
+                                        <span class="btn-icon">🔀</span>
+                                        <span class="btn-label">PR作成</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="pr-list">
+                                        <span class="btn-icon">📋</span>
+                                        <span class="btn-label">PR一覧</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="issue-create">
+                                        <span class="btn-icon">🐛</span>
+                                        <span class="btn-label">Issue作成</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="issue-list">
+                                        <span class="btn-icon">📝</span>
+                                        <span class="btn-label">Issue一覧</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Git & GitHub連携 -->
+                            <div class="scenario-category">
+                                <h4>🔗 Git & GitHub連携</h4>
+                                <div class="scenario-buttons">
+                                    <button class="scenario-btn" data-scenario="local-to-github">
+                                        <span class="btn-icon">☁️</span>
+                                        <span class="btn-label">GitHubへ</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="setup-upstream">
+                                        <span class="btn-icon">⬆️</span>
+                                        <span class="btn-label">Upstream設定</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="sync-with-upstream">
+                                        <span class="btn-icon">🔄</span>
+                                        <span class="btn-label">Upstream同期</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="create-pr-from-fork">
+                                        <span class="btn-icon">🚀</span>
+                                        <span class="btn-label">ForkからPR</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div id="parameterForm" class="parameter-form hidden">
                         <!-- Dynamic form fields will be inserted here -->

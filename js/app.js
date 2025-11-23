@@ -403,6 +403,33 @@ class GitWizardApp {
                 this.handleScenarioChange(e.target.value);
             });
         }
+
+        // ビジュアルボタンのイベントリスナー
+        const scenarioButtons = document.querySelectorAll('.scenario-btn');
+        scenarioButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // 選択状態を更新
+                scenarioButtons.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+
+                // シナリオを処理
+                const scenario = btn.dataset.scenario;
+                this.handleScenarioChange(scenario);
+
+                // ドロップダウンも同期
+                if (scenarioSelect) {
+                    scenarioSelect.value = scenario;
+                }
+
+                // パラメータフォームまでスムーズにスクロール
+                setTimeout(() => {
+                    const parameterForm = document.getElementById('parameterForm');
+                    if (parameterForm && !parameterForm.classList.contains('hidden')) {
+                        parameterForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }, 100);
+            });
+        });
     }
 
     /**
