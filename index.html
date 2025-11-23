@@ -52,6 +52,54 @@
                     <p>実行したいコマンドを貼り付けて、何が起こるか事前に確認しましょう</p>
                 </div>
 
+                <!-- Sample Commands Selector -->
+                <div class="sample-commands-section">
+                    <label for="sampleCommandSelect" class="input-label">
+                        <span class="label-text">💡 サンプルコマンドから試す</span>
+                    </label>
+                    <select id="sampleCommandSelect" class="select-input">
+                        <option value="">-- サンプルを選択してください --</option>
+                        <optgroup label="⚠️ 危険なコマンド（警告が表示されます）">
+                            <option value="git push upstream main">git push upstream main（Fork元への誤Push）</option>
+                            <option value="git push --force origin main">git push --force origin main（強制プッシュ）</option>
+                            <option value="git reset --hard HEAD~5">git reset --hard HEAD~5（履歴の破壊）</option>
+                            <option value="git clean -fdx">git clean -fdx（ファイルの削除）</option>
+                            <option value="git push origin master --force">git push origin master --force（masterへの強制プッシュ）</option>
+                        </optgroup>
+                        <optgroup label="🟡 注意が必要なコマンド">
+                            <option value="git commit --amend">git commit --amend（コミットの修正）</option>
+                            <option value="git rebase -i HEAD~3">git rebase -i HEAD~3（履歴の書き換え）</option>
+                            <option value="git push origin main">git push origin main（mainへのプッシュ）</option>
+                            <option value="git merge feature-branch">git merge feature-branch（マージ）</option>
+                        </optgroup>
+                        <optgroup label="🟢 安全なコマンド">
+                            <option value="git status">git status（状態確認）</option>
+                            <option value="git log --oneline --graph">git log --oneline --graph（履歴表示）</option>
+                            <option value="git diff">git diff（変更確認）</option>
+                            <option value="git remote -v">git remote -v（リモート確認）</option>
+                            <option value="git fetch origin">git fetch origin（リモート取得）</option>
+                        </optgroup>
+                        <optgroup label="🐙 GitHub CLI コマンド">
+                            <option value="gh pr create --base main">gh pr create --base main（PR作成）</option>
+                            <option value="gh pr list">gh pr list（PR一覧）</option>
+                            <option value="gh repo fork owner/repo">gh repo fork owner/repo（リポジトリFork）</option>
+                            <option value="gh issue create --title &quot;Bug&quot;">gh issue create --title "Bug"（Issue作成）</option>
+                        </optgroup>
+                        <optgroup label="🌿 ブランチ操作">
+                            <option value="git checkout -b feature/new-feature">git checkout -b feature/new-feature（ブランチ作成）</option>
+                            <option value="git switch main">git switch main（ブランチ切替）</option>
+                            <option value="git branch -d old-feature">git branch -d old-feature（ブランチ削除）</option>
+                            <option value="git branch -D unmerged-branch">git branch -D unmerged-branch（強制削除）</option>
+                        </optgroup>
+                        <optgroup label="🔄 リモート同期">
+                            <option value="git pull origin main">git pull origin main（リモートから取得）</option>
+                            <option value="git fetch upstream">git fetch upstream（Upstream取得）</option>
+                            <option value="git merge upstream/main">git merge upstream/main（Upstreamマージ）</option>
+                            <option value="git push origin feature-branch">git push origin feature-branch（ブランチプッシュ）</option>
+                        </optgroup>
+                    </select>
+                </div>
+
                 <div class="input-section">
                     <label for="commandInput" class="input-label">
                         <span class="label-text">コマンドを入力または貼り付け</span>
@@ -268,6 +316,7 @@
     <script src="js/command-database.js"></script>
     <script src="js/command-analyzer.js"></script>
     <script src="js/wizard-data.js"></script>
+    <script src="js/git-github-concepts.js"></script>
     <script src="js/app.js"></script>
 
     <!-- Service Worker Registration -->

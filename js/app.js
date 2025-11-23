@@ -86,6 +86,21 @@ class GitWizardApp {
                 this.copyGeneratedCommand();
             });
         }
+
+        // サンプルコマンド選択
+        const sampleCommandSelect = document.getElementById('sampleCommandSelect');
+        if (sampleCommandSelect) {
+            sampleCommandSelect.addEventListener('change', (e) => {
+                const selectedCommand = e.target.value;
+                if (selectedCommand) {
+                    commandInput.value = selectedCommand;
+                    // 自動的に解析を実行
+                    this.analyzeCommand();
+                    // 選択をリセット
+                    e.target.value = '';
+                }
+            });
+        }
     }
 
     /**

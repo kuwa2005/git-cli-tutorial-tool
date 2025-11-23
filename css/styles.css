@@ -238,6 +238,26 @@ body {
 }
 
 /* =====================================
+   Sample Commands Section
+   ===================================== */
+.sample-commands-section {
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.05), rgba(13, 202, 240, 0.05));
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.sample-commands-section .input-label {
+    margin-bottom: var(--spacing-md);
+}
+
+.sample-commands-section .label-text {
+    font-size: 1rem;
+    color: var(--color-primary);
+}
+
+/* =====================================
    Input Section
    ===================================== */
 .input-section {
