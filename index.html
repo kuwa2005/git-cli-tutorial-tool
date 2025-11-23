@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Git & GitHub CLI の操作をビジュアルに学べるインタラクティブツール">
+    <meta name="theme-color" content="#0d6efd">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Git Wizard">
     <title>Git & GitHub CLI Wizard - インタラクティブ学習ツール</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -262,6 +267,23 @@
     <!-- Scripts -->
     <script src="js/command-database.js"></script>
     <script src="js/command-analyzer.js"></script>
+    <script src="js/wizard-data.js"></script>
     <script src="js/app.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // Service Worker registration for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((registration) => {
+                        console.log('[PWA] Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('[PWA] Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>

@@ -8,6 +8,8 @@ class GitWizardApp {
         this.analyzer = new CommandAnalyzer(CommandDatabase);
         this.currentTab = 'analyzer';
         this.settings = this.loadSettings();
+        this.currentWizard = null;
+        this.currentStep = 0;
         this.init();
     }
 
@@ -19,6 +21,7 @@ class GitWizardApp {
         this.applySettings();
         this.initializeReference();
         this.setupCommandBuilder();
+        this.setupWizard();
     }
 
     /**
@@ -758,6 +761,259 @@ class GitWizardApp {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    /**
+     * ウィザードを設定
+     */
+    setupWizard() {
+        const wizardCards = document.querySelectorAll('.wizard-card');
+        wizardCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const wizardId = card.dataset.wizard;
+                this.startWizard(wizardId);
+            });
+        });
+    }
+
+    /**
+     * ウィザードを開始
+     */
+    startWizard(wizardId) {
+        if (!WizardData[wizardId]) {
+            console.error(`Wizard not found: ${wizardId}`);
+            return;
+        }
+
+        this.currentWizard = WizardData[wizardId];
+        this.currentStep = 0;
+        this.renderWizard();
+    }
+
+    /**
+     * ウィザードをレンダリング
+     */
+    renderWizard() {
+        const wizardContent = document.getElementById('wizardContent');
+        const wizardSelector = document.querySelector('.wizard-selector');
+
+        if (!this.currentWizard) {
+            wizardContent.classList.add('hidden');
+            wizardSelector.classList.remove('hidden');
+            return;
+        }
+
+        wizardSelector.classList.add('hidden');
+        wizardContent.classList.remove('hidden');
+
+        const step = this.currentWizard.steps[this.currentStep];
+        const totalSteps = this.currentWizard.steps.length;
+
+        let html = `
+            <div class="wizard-header">
+                <button class="btn btn-secondary" id="backToWizardsBtn">
+                    ← コース一覧に戻る
+                </button>
+                <h2>${this.currentWizard.title}</h2>
+                <div class="wizard-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${((this.currentStep + 1) / totalSteps) * 100}%"></div>
+                    </div>
+                    <div class="progress-text">ステップ ${this.currentStep + 1} / ${totalSteps}</div>
+                </div>
+            </div>
+
+            <div class="wizard-step">
+                <h3>${step.title}</h3>
+                <div class="wizard-step-content">
+                    ${step.content || ''}
+                </div>
+        `;
+
+        // ステップタイプに応じたコンテンツ
+        if (step.commands && step.commands.length > 0) {
+            html += '<div class="wizard-commands">';
+            step.commands.forEach(cmd => {
+                const highlightClass = cmd.highlight ? 'highlight' : '';
+                html += `
+                    <div class="wizard-command ${highlightClass}">
+                        <code>${this.escapeHtml(cmd.command)}</code>
+                        <p>${cmd.explanation}</p>
+                    </div>
+                `;
+            });
+            html += '</div>';
+        }
+
+        // 選択肢がある場合
+        if (step.choices && step.choices.length > 0) {
+            html += '<div class="wizard-choices">';
+            step.choices.forEach(choice => {
+                html += `
+                    <div class="wizard-choice">
+                        <h4>${choice.icon || ''} ${choice.title}</h4>
+                        ${choice.content || ''}
+                        ${choice.commands ? this.renderWizardCommands(choice.commands) : ''}
+                    </div>
+                `;
+            });
+            html += '</div>';
+        }
+
+        // ダイアグラム
+        if (step.diagram) {
+            html += `<div class="wizard-diagram">${step.diagram}</div>`;
+        }
+
+        // ノート
+        if (step.note) {
+            html += `<div class="wizard-note">💡 ${step.note}</div>`;
+        }
+
+        // ヒント
+        if (step.tip) {
+            html += `<div class="wizard-tip">${step.tip}</div>`;
+        }
+
+        // 警告
+        if (step.warning) {
+            html += `<div class="wizard-warning">${step.warning}</div>`;
+        }
+
+        // 検証方法
+        if (step.verification) {
+            html += `<div class="wizard-verification">${step.verification}</div>`;
+        }
+
+        // 期待される出力
+        if (step.expectedOutput) {
+            html += `
+                <div class="wizard-expected">
+                    <h4>期待される出力:</h4>
+                    <pre>${this.escapeHtml(step.expectedOutput)}</pre>
+                </div>
+            `;
+        }
+
+        // 代替案
+        if (step.alternative) {
+            html += `<div class="wizard-alternative">${step.alternative}</div>`;
+        }
+
+        // ナビゲーションボタン
+        html += '<div class="wizard-navigation">';
+
+        if (this.currentStep > 0) {
+            html += '<button class="btn btn-secondary" id="prevStepBtn">← 前のステップ</button>';
+        }
+
+        if (this.currentStep < totalSteps - 1) {
+            html += '<button class="btn btn-primary" id="nextStepBtn">次のステップ →</button>';
+        } else {
+            html += '<button class="btn btn-primary" id="finishWizardBtn">完了！ 🎉</button>';
+        }
+
+        html += '</div>';
+        html += '</div>'; // wizard-step
+
+        wizardContent.innerHTML = html;
+
+        // イベントリスナーを設定
+        this.setupWizardEventListeners();
+    }
+
+    /**
+     * ウィザードコマンドをレンダリング
+     */
+    renderWizardCommands(commands) {
+        let html = '<div class="wizard-commands">';
+        commands.forEach(cmd => {
+            const highlightClass = cmd.highlight ? 'highlight' : '';
+            html += `
+                <div class="wizard-command ${highlightClass}">
+                    <code>${this.escapeHtml(cmd.command)}</code>
+                    <p>${cmd.explanation}</p>
+                </div>
+            `;
+        });
+        html += '</div>';
+        return html;
+    }
+
+    /**
+     * ウィザードイベントリスナーを設定
+     */
+    setupWizardEventListeners() {
+        const backBtn = document.getElementById('backToWizardsBtn');
+        const nextBtn = document.getElementById('nextStepBtn');
+        const prevBtn = document.getElementById('prevStepBtn');
+        const finishBtn = document.getElementById('finishWizardBtn');
+
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                this.currentWizard = null;
+                this.currentStep = 0;
+                this.renderWizard();
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                this.currentStep++;
+                this.renderWizard();
+                document.getElementById('wizardContent').scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                this.currentStep--;
+                this.renderWizard();
+                document.getElementById('wizardContent').scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        if (finishBtn) {
+            finishBtn.addEventListener('click', () => {
+                this.showWizardCompletion();
+            });
+        }
+    }
+
+    /**
+     * ウィザード完了画面を表示
+     */
+    showWizardCompletion() {
+        const wizardContent = document.getElementById('wizardContent');
+
+        const html = `
+            <div class="wizard-completion">
+                <div class="completion-icon">🎉</div>
+                <h2>おめでとうございます！</h2>
+                <p>${this.currentWizard.title} コースを完了しました。</p>
+
+                <div class="completion-actions">
+                    <button class="btn btn-primary" id="anotherWizardBtn">
+                        別のコースを学ぶ
+                    </button>
+                    <button class="btn btn-secondary" id="tryCommandsBtn">
+                        コマンドを試す
+                    </button>
+                </div>
+            </div>
+        `;
+
+        wizardContent.innerHTML = html;
+
+        document.getElementById('anotherWizardBtn').addEventListener('click', () => {
+            this.currentWizard = null;
+            this.currentStep = 0;
+            this.renderWizard();
+        });
+
+        document.getElementById('tryCommandsBtn').addEventListener('click', () => {
+            this.switchTab('analyzer');
+        });
     }
 }
 
