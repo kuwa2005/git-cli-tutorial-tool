@@ -278,7 +278,7 @@ const ReverseLookupDatabase = {
                 {
                     title: 'GitHub CLI で同期（最も簡単）',
                     commands: [
-                        { cmd: 'gh repo sync', desc: 'フォークを自動的に同期' }
+                        { cmd: 'gh repo sync', desc: '【状況】他人のリポジトリをフォークして作業しているが、フォーク元が更新されたので最新の状態に追いつきたい\n【実行すると】GitHub CLIが自動的にフォーク元の最新の変更を取得して、自分のフォーク（GitHub上）とローカルの両方を更新します\n【結果】フォーク元、自分のGitHubフォーク、ローカルリポジトリがすべて同じ最新の状態になります\n【メリット】複雑なコマンドを覚えなくても、1コマンドで完結' }
                     ],
                     when: 'GitHub CLI がインストール済みの場合',
                     dangerLevel: 'safe'
@@ -286,10 +286,10 @@ const ReverseLookupDatabase = {
                 {
                     title: 'Git コマンドで同期',
                     commands: [
-                        { cmd: 'git fetch upstream', desc: 'upstreamから最新の変更を取得' },
-                        { cmd: 'git checkout main', desc: 'mainブランチに切り替え' },
-                        { cmd: 'git merge upstream/main', desc: 'upstreamの変更をマージ' },
-                        { cmd: 'git push origin main', desc: '自分のフォークを更新' }
+                        { cmd: 'git fetch upstream', desc: '【実行すると】upstreamリモート（フォーク元のリポジトリ）から最新のコミット履歴を取得します。ただし、まだローカルのファイルには反映されません\n【結果】upstream/mainという名前で最新の状態が保存されます' },
+                        { cmd: 'git checkout main', desc: '【実行すると】作業中のブランチをmainブランチに切り替えます' },
+                        { cmd: 'git merge upstream/main', desc: '【実行すると】取得したupstream/main（フォーク元の最新）を現在のmainブランチに統合します\n【結果】ローカルのmainブランチがフォーク元の最新状態になります' },
+                        { cmd: 'git push origin main', desc: '【実行すると】更新したローカルのmainブランチを自分のGitHubフォーク（origin）に送信します\n【結果】GitHubの自分のフォークも最新状態になります' }
                     ],
                     when: 'upstreamリモートが設定済みの場合',
                     dangerLevel: 'safe'
@@ -331,8 +331,8 @@ const ReverseLookupDatabase = {
                 {
                     title: 'ブランチを作成して切り替え',
                     commands: [
-                        { cmd: 'git checkout -b feature-branch', desc: '新しいブランチを作成して切り替え' },
-                        { cmd: 'git switch -c feature-branch', desc: '新しい書き方（Git 2.23+）' }
+                        { cmd: 'git checkout -b feature-branch', desc: '【状況】新しい機能を開発したいので、mainブランチとは別の作業ブランチを作りたい\n【実行すると】現在いるブランチ（通常はmain）から分岐して、feature-branchという名前の新しいブランチを作成し、同時にそのブランチに切り替わります\n【結果】feature-branchで作業を開始できます。ここで行う変更はmainブランチには影響しません\n【例】新機能開発：git checkout -b feature/user-auth、バグ修正：git checkout -b fix/login-bug' },
+                        { cmd: 'git switch -c feature-branch', desc: '【実行すると】checkoutと同じことをしますが、より新しく分かりやすいコマンドです\n【違い】switchはブランチ操作専用なので、間違ってファイルを変更してしまうリスクがありません\n【推奨】Git 2.23以降を使っている場合はこちらが推奨' }
                     ],
                     dangerLevel: 'safe'
                 }
@@ -449,8 +449,8 @@ const ReverseLookupDatabase = {
                 {
                     title: '変更の一時退避',
                     commands: [
-                        { cmd: 'git stash', desc: '現在の変更を退避' },
-                        { cmd: 'git stash save "作業内容の説明"', desc: '説明付きで退避' }
+                        { cmd: 'git stash', desc: '【状況】作業中に急に別のブランチに切り替える必要が出たが、今の変更はまだコミットしたくない（中途半端な状態）\n【実行すると】現在の変更（ステージング済み＋未ステージングの両方）を一時的に「避難所」に保存して、作業ディレクトリをクリーンな状態に戻します\n【結果】git statusで確認すると「変更なし」と表示されます。別のブランチに安全に切り替えられます。変更内容は失われず、後で復元できます\n【例】feature-aで作業中→緊急バグ修正が必要→stashで退避→mainに切り替えて修正→feature-aに戻ってstash pop' },
+                        { cmd: 'git stash save "作業内容の説明"', desc: '【実行すると】stashと同じですが、「ログイン画面のUI作業中」などメモを付けられます\n【メリット】複数の退避がある場合に、どれがどの作業か分かりやすくなります' }
                     ],
                     when: 'ブランチを切り替える前に変更を保存したい',
                     dangerLevel: 'safe'
@@ -458,9 +458,9 @@ const ReverseLookupDatabase = {
                 {
                     title: '退避した変更を戻す',
                     commands: [
-                        { cmd: 'git stash list', desc: '退避リストを表示' },
-                        { cmd: 'git stash pop', desc: '最新の退避を適用して削除' },
-                        { cmd: 'git stash apply', desc: '退避を適用（削除しない）' }
+                        { cmd: 'git stash list', desc: '【実行すると】今まで退避した変更の一覧を表示します\n【表示例】stash@{0}: WIP on feature-a: 作業内容の説明\n【結果】どの退避を復元すべきか確認できます' },
+                        { cmd: 'git stash pop', desc: '【実行すると】最新の退避（stash@{0}）を現在のブランチに適用し、同時に退避リストから削除します\n【結果】ファイルが退避前の編集中の状態に戻ります。もう一度作業を続けられます\n【使い分け】復元後にもう同じ退避は不要な場合（通常はこちら）' },
+                        { cmd: 'git stash apply', desc: '【実行すると】最新の退避を適用しますが、退避リストからは削除しません\n【結果】変更は復元されますが、stash listには残ったまま。複数のブランチで同じ変更を試したい時に便利\n【使い分け】同じ変更を別のブランチでも試したい場合' }
                     ],
                     dangerLevel: 'safe'
                 }
@@ -493,8 +493,8 @@ const ReverseLookupDatabase = {
                 {
                     title: 'HTTPSでクローン（推奨）',
                     commands: [
-                        { cmd: 'git clone https://github.com/owner/repo.git', desc: 'HTTPSプロトコルでクローン' },
-                        { cmd: 'git clone https://github.com/owner/repo.git my-folder', desc: 'ディレクトリ名を指定してクローン' }
+                        { cmd: 'git clone https://github.com/owner/repo.git', desc: '【状況】GitHubのリポジトリをローカルPCにダウンロードして作業を始めたい場合\n【実行すると】指定したURLのリポジトリ全体（すべてのファイル、履歴、ブランチ）をローカルにコピーします。リポジトリ名と同じ名前のフォルダが自動作成されます\n【結果】repo/というフォルダができて、その中にすべてのファイルがダウンロードされます。自動的にoriginリモートも設定されます\n【例】https://github.com/facebook/react.git → reactフォルダができる' },
+                        { cmd: 'git clone https://github.com/owner/repo.git my-folder', desc: '【実行すると】クローンしますが、フォルダ名を自分で指定できます\n【結果】repo/ではなくmy-folder/という名前でフォルダができます\n【例】長いリポジトリ名を短い名前に変えたい場合に便利' }
                     ],
                     when: '通常のクローン（認証はGitHub CLIまたはトークンで）',
                     dangerLevel: 'safe'
@@ -502,7 +502,7 @@ const ReverseLookupDatabase = {
                 {
                     title: 'SSHでクローン',
                     commands: [
-                        { cmd: 'git clone git@github.com:owner/repo.git', desc: 'SSHキーを使ってクローン' }
+                        { cmd: 'git clone git@github.com:owner/repo.git', desc: '【状況】SSHキーを設定済みで、パスワード入力なしでクローンしたい場合\n【実行すると】SSH認証を使ってリポジトリをクローンします。HTTPSと同じくすべてのファイルと履歴がダウンロードされます\n【メリット】毎回パスワードを入力する必要がありません\n【前提条件】GitHub にSSH公開鍵を登録済みであること' }
                     ],
                     when: 'SSHキーを設定済みの場合',
                     dangerLevel: 'safe'
