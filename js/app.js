@@ -101,6 +101,23 @@ class GitWizardApp {
                 }
             });
         }
+
+        // トップへ戻るボタン
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+        if (scrollToTopBtn) {
+            scrollToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // ヘッダータイトルクリックでページリロード
+        const headerTitle = document.querySelector('.header h1');
+        if (headerTitle) {
+            headerTitle.style.cursor = 'pointer';
+            headerTitle.addEventListener('click', () => {
+                window.location.reload();
+            });
+        }
     }
 
     /**
@@ -638,63 +655,288 @@ class GitWizardApp {
      * リファレンスを初期化
      */
     initializeReference() {
+        this.activeCategory = 'all';
+        this.activeDanger = 'all';
+        this.currentSearchQuery = '';
+
         this.renderReference();
 
         const searchInput = document.getElementById('referenceSearch');
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
-                this.filterReference(e.target.value);
+                this.currentSearchQuery = e.target.value;
+                this.renderReference();
             });
         }
+
+        // カテゴリフィルターボタン
+        const categoryFilters = document.querySelectorAll('#categoryFilters .filter-btn');
+        categoryFilters.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                categoryFilters.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                this.activeCategory = e.target.dataset.category;
+                this.renderReference();
+            });
+        });
+
+        // 危険度フィルターボタン
+        const dangerFilters = document.querySelectorAll('#dangerFilters .filter-btn');
+        dangerFilters.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                dangerFilters.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                this.activeDanger = e.target.dataset.danger;
+                this.renderReference();
+            });
+        });
+
+        // スクロール時の関連項目表示
+        this.setupScrollRelatedItems();
     }
 
     /**
      * リファレンスをレンダリング
      */
-    renderReference(filter = '') {
+    renderReference() {
         const referenceContent = document.getElementById('referenceContent');
         let html = '';
+        let count = 0;
 
         // Git コマンド
         Object.entries(CommandDatabase.git).forEach(([cmd, info]) => {
-            if (filter && !cmd.includes(filter.toLowerCase()) && !info.description.toLowerCase().includes(filter.toLowerCase())) {
+            // 検索クエリフィルター
+            if (this.currentSearchQuery &&
+                !cmd.includes(this.currentSearchQuery.toLowerCase()) &&
+                !info.description.toLowerCase().includes(this.currentSearchQuery.toLowerCase())) {
+                return;
+            }
+
+            // カテゴリフィルター
+            if (this.activeCategory !== 'all' && info.category !== this.activeCategory) {
+                return;
+            }
+
+            // 危険度フィルター
+            if (this.activeDanger !== 'all' && info.dangerLevel !== this.activeDanger) {
                 return;
             }
 
             const category = CommandDatabase.categories[info.category];
             html += `
-                <div class="reference-card">
+                <div class="reference-card" data-command="git ${cmd}" data-category="${info.category}" data-danger="${info.dangerLevel}">
                     <h4>${category ? category.icon : ''} git ${cmd}</h4>
                     <p>${info.description}</p>
                     <p><strong>危険度:</strong> ${CommandDatabase.dangerLevels[info.dangerLevel].icon} ${CommandDatabase.dangerLevels[info.dangerLevel].label}</p>
                     ${info.examples ? `<p><strong>例:</strong> <code>${info.examples[0]}</code></p>` : ''}
                 </div>
             `;
+            count++;
         });
 
         // GitHub CLI コマンド
         Object.entries(CommandDatabase.gh).forEach(([cmd, info]) => {
-            if (filter && !cmd.includes(filter.toLowerCase()) && !info.description.toLowerCase().includes(filter.toLowerCase())) {
+            // 検索クエリフィルター
+            if (this.currentSearchQuery &&
+                !cmd.includes(this.currentSearchQuery.toLowerCase()) &&
+                !info.description.toLowerCase().includes(this.currentSearchQuery.toLowerCase())) {
+                return;
+            }
+
+            // カテゴリフィルター（GitHub CLIはremoteカテゴリとして扱う）
+            if (this.activeCategory !== 'all' && this.activeCategory !== 'remote') {
+                return;
+            }
+
+            // 危険度フィルター（GitHub CLIは基本的に安全）
+            if (this.activeDanger !== 'all' && this.activeDanger !== 'safe') {
                 return;
             }
 
             html += `
-                <div class="reference-card">
+                <div class="reference-card" data-command="gh ${cmd}" data-category="remote" data-danger="safe">
                     <h4>🐙 gh ${cmd}</h4>
                     <p>${info.description}</p>
                     ${info.examples ? `<p><strong>例:</strong> <code>${info.examples[0]}</code></p>` : ''}
                 </div>
             `;
+            count++;
         });
 
         referenceContent.innerHTML = html || '<p>該当するコマンドが見つかりませんでした。</p>';
     }
 
     /**
-     * リファレンスをフィルタリング
+     * スクロール関連機能を設定
      */
-    filterReference(query) {
-        this.renderReference(query);
+    setupScrollRelatedItems() {
+        const referenceTab = document.getElementById('reference');
+        const relatedItemsContainer = document.createElement('div');
+        relatedItemsContainer.id = 'relatedItems';
+        relatedItemsContainer.className = 'related-items hidden';
+        relatedItemsContainer.innerHTML = `
+            <h3>📚 関連コマンド</h3>
+            <div id="relatedItemsContent"></div>
+        `;
+
+        // リファレンスタブにコンテナを追加
+        if (referenceTab) {
+            referenceTab.appendChild(relatedItemsContainer);
+
+            // スクロールイベントリスナー
+            referenceTab.addEventListener('scroll', () => {
+                const scrollTop = referenceTab.scrollTop;
+                const scrollHeight = referenceTab.scrollHeight;
+                const clientHeight = referenceTab.clientHeight;
+
+                // 下から100pxの位置に到達したら関連項目を表示
+                if (scrollTop + clientHeight >= scrollHeight - 100) {
+                    this.showRelatedItems();
+                } else if (scrollTop + clientHeight < scrollHeight - 200) {
+                    this.hideRelatedItems();
+                }
+
+                // トップへ戻るボタンの表示制御
+                this.updateScrollToTopButton(scrollTop);
+            });
+        }
+    }
+
+    /**
+     * 関連項目を表示
+     */
+    showRelatedItems() {
+        const relatedItems = document.getElementById('relatedItems');
+        if (!relatedItems || !relatedItems.classList.contains('hidden')) return;
+
+        relatedItems.classList.remove('hidden');
+
+        // 現在のフィルター設定に基づいて関連コマンドを提案
+        const relatedContent = document.getElementById('relatedItemsContent');
+        let html = '';
+
+        // 現在のカテゴリに基づいた関連コマンドを表示
+        const relatedSuggestions = this.getRelatedCommands();
+
+        if (relatedSuggestions.length > 0) {
+            relatedSuggestions.forEach(suggestion => {
+                html += `
+                    <div class="related-card" data-category="${suggestion.category}">
+                        <h5>${suggestion.icon} ${suggestion.title}</h5>
+                        <p>${suggestion.description}</p>
+                        <button class="btn-link" data-filter-category="${suggestion.filterCategory}">
+                            ${suggestion.title}のコマンドを見る →
+                        </button>
+                    </div>
+                `;
+            });
+        } else {
+            html = '<p>他のカテゴリも探索してみましょう！</p>';
+        }
+
+        relatedContent.innerHTML = html;
+
+        // 関連カードのボタンにイベントリスナーを追加
+        document.querySelectorAll('.related-card .btn-link').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const category = e.target.dataset.filterCategory;
+                this.activeCategory = category;
+                this.renderReference();
+
+                // カテゴリフィルターボタンのUIを更新
+                document.querySelectorAll('#categoryFilters .filter-btn').forEach(b => {
+                    b.classList.remove('active');
+                    if (b.dataset.category === category) {
+                        b.classList.add('active');
+                    }
+                });
+
+                // トップへスクロール
+                const referenceTab = document.getElementById('reference');
+                if (referenceTab) {
+                    referenceTab.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        });
+    }
+
+    /**
+     * 関連項目を非表示
+     */
+    hideRelatedItems() {
+        const relatedItems = document.getElementById('relatedItems');
+        if (relatedItems) {
+            relatedItems.classList.add('hidden');
+        }
+    }
+
+    /**
+     * 関連コマンドを取得
+     */
+    getRelatedCommands() {
+        const suggestions = [];
+
+        // 現在のフィルター状態に基づいて関連項目を提案
+        if (this.activeCategory === 'all') {
+            suggestions.push(
+                { icon: '🔍', title: '情報確認', description: 'リポジトリの状態を確認するコマンド', filterCategory: 'info', category: 'info' },
+                { icon: '📝', title: 'ステージング', description: '変更をステージングエリアに追加', filterCategory: 'staging', category: 'staging' },
+                { icon: '🌿', title: 'ブランチ操作', description: 'ブランチの作成・切り替え・削除', filterCategory: 'branch', category: 'branch' }
+            );
+        } else if (this.activeCategory === 'info') {
+            suggestions.push(
+                { icon: '📝', title: 'ステージング', description: '情報確認の後は変更をステージング', filterCategory: 'staging', category: 'staging' },
+                { icon: '🔄', title: '同期', description: 'リモートとの同期を確認', filterCategory: 'remote', category: 'remote' }
+            );
+        } else if (this.activeCategory === 'staging') {
+            suggestions.push(
+                { icon: '💾', title: 'コミット', description: 'ステージした変更を記録', filterCategory: 'commit', category: 'commit' },
+                { icon: '🔍', title: '情報確認', description: 'ステージの状態を確認', filterCategory: 'info', category: 'info' }
+            );
+        } else if (this.activeCategory === 'commit') {
+            suggestions.push(
+                { icon: '📤', title: 'プッシュ', description: 'コミットをリモートへ送信', filterCategory: 'remote', category: 'remote' },
+                { icon: '🔙', title: '取り消し', description: 'コミットを取り消す方法', filterCategory: 'undo', category: 'undo' }
+            );
+        } else if (this.activeCategory === 'branch') {
+            suggestions.push(
+                { icon: '🔀', title: 'マージ', description: 'ブランチを統合する', filterCategory: 'merge', category: 'merge' },
+                { icon: '💾', title: 'コミット', description: 'ブランチでの変更を記録', filterCategory: 'commit', category: 'commit' }
+            );
+        } else if (this.activeCategory === 'remote') {
+            suggestions.push(
+                { icon: '🌿', title: 'ブランチ操作', description: 'リモートブランチとの連携', filterCategory: 'branch', category: 'branch' },
+                { icon: '🔀', title: 'マージ', description: 'リモートの変更をマージ', filterCategory: 'merge', category: 'merge' }
+            );
+        } else if (this.activeCategory === 'merge') {
+            suggestions.push(
+                { icon: '🔙', title: '取り消し', description: 'マージの問題を解決', filterCategory: 'undo', category: 'undo' },
+                { icon: '🌿', title: 'ブランチ操作', description: 'マージ後のブランチ管理', filterCategory: 'branch', category: 'branch' }
+            );
+        }
+
+        // 危険度フィルターに基づいた提案
+        if (this.activeDanger === 'critical' || this.activeDanger === 'high') {
+            suggestions.unshift(
+                { icon: '✅', title: '安全なコマンド', description: '安全に使えるコマンドを確認', filterCategory: 'all', category: 'all' }
+            );
+        }
+
+        return suggestions.slice(0, 3); // 最大3つまで表示
+    }
+
+    /**
+     * トップへ戻るボタンの表示を更新
+     */
+    updateScrollToTopButton(scrollTop) {
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+        if (!scrollToTopBtn) return;
+
+        if (scrollTop > 300) {
+            scrollToTopBtn.classList.add('visible');
+        } else {
+            scrollToTopBtn.classList.remove('visible');
+        }
     }
 
     /**

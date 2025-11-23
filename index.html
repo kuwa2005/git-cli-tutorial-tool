@@ -299,6 +299,34 @@
                         <span class="search-icon">🔍</span>
                     </div>
 
+                    <!-- Filter Buttons -->
+                    <div class="filter-section">
+                        <div class="filter-group">
+                            <h4>📂 カテゴリで絞り込み</h4>
+                            <div class="filter-buttons" id="categoryFilters">
+                                <button class="filter-btn active" data-category="all">すべて</button>
+                                <button class="filter-btn" data-category="info">🔍 情報確認</button>
+                                <button class="filter-btn" data-category="staging">📦 ステージング</button>
+                                <button class="filter-btn" data-category="commit">💾 コミット</button>
+                                <button class="filter-btn" data-category="remote">☁️ リモート</button>
+                                <button class="filter-btn" data-category="branch">🌿 ブランチ</button>
+                                <button class="filter-btn" data-category="history">📜 履歴操作</button>
+                                <button class="filter-btn" data-category="github">🐙 GitHub</button>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <h4>⚠️ 危険度で絞り込み</h4>
+                            <div class="filter-buttons" id="dangerFilters">
+                                <button class="filter-btn active" data-danger="all">すべて</button>
+                                <button class="filter-btn" data-danger="safe">🟢 安全</button>
+                                <button class="filter-btn" data-danger="caution">🟡 注意</button>
+                                <button class="filter-btn" data-danger="warning">🔴 危険</button>
+                                <button class="filter-btn" data-danger="critical">⛔ 非常に危険</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="referenceContent" class="reference-content">
                         <!-- Reference content will be dynamically inserted here -->
                     </div>
@@ -315,6 +343,11 @@
             </p>
         </footer>
     </div>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTopBtn" class="scroll-to-top" title="トップへ戻る">
+        ↑
+    </button>
 
     <!-- Scripts -->
     <script src="js/command-database.js"></script>
