@@ -854,8 +854,12 @@ class GitWizardApp {
                 <div class="reference-card" data-command="git ${cmd}" data-category="${info.category}" data-danger="${info.dangerLevel}">
                     <h4>${category ? category.icon : ''} git ${cmd}</h4>
                     <p>${info.description}</p>
+                    ${info.explanation ? `<p class="command-explanation">${this.escapeHtml(info.explanation)}</p>` : ''}
                     <p><strong>危険度:</strong> ${CommandDatabase.dangerLevels[info.dangerLevel].icon} ${CommandDatabase.dangerLevels[info.dangerLevel].label}</p>
+                    ${info.prerequisites ? `<div class="task-prerequisites">${this.escapeHtml(info.prerequisites)}</div>` : ''}
                     ${info.examples ? `<p><strong>例:</strong> <code>${info.examples[0]}</code></p>` : ''}
+                    ${info.nextSteps ? `<div class="task-next-steps">${this.escapeHtml(info.nextSteps)}</div>` : ''}
+                    ${info.relatedCommands && info.relatedCommands.length > 0 ? this.renderRelatedCommands(info.relatedCommands, 'git') : ''}
                 </div>
             `;
             count++;
@@ -891,6 +895,40 @@ class GitWizardApp {
         });
 
         referenceContent.innerHTML = html || '<p>該当するコマンドが見つかりませんでした。</p>';
+
+        // 関連コマンドリンクのイベントリスナーを設定
+        referenceContent.querySelectorAll('.related-link-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const targetCmd = e.target.dataset.commandName;
+                const targetCard = referenceContent.querySelector(`[data-command="${targetCmd}"]`);
+                if (targetCard) {
+                    // スムーズにスクロール
+                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // 一時的にハイライト
+                    targetCard.classList.add('highlight-flash');
+                    setTimeout(() => {
+                        targetCard.classList.remove('highlight-flash');
+                    }, 2000);
+                }
+            });
+        });
+    }
+
+    /**
+     * 関連コマンドをレンダリング
+     */
+    renderRelatedCommands(relatedCmds, prefix = 'git') {
+        let html = '<div class="task-related">';
+        html += '<h4>🔗 関連コマンド</h4>';
+        html += '<div class="related-links">';
+
+        relatedCmds.forEach(cmdName => {
+            const fullCmdName = `${prefix} ${cmdName}`;
+            html += `<button class="related-link-btn" data-command-name="${fullCmdName}">${cmdName}</button>`;
+        });
+
+        html += '</div></div>';
+        return html;
     }
 
     /**

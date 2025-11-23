@@ -20,6 +20,9 @@ const CommandDatabase = {
                 '--branch': 'ブランチ情報も表示'
             },
             explanation: '現在どのファイルが変更されているか、どのファイルがステージング済みか（git addされているか）を確認します。赤色=変更あるが未ステージング、緑色=ステージング済みでコミット可能、と色分けして表示されます。コミット前に必ず確認すると安全です。',
+            prerequisites: '💡 Gitリポジトリ内のディレクトリで実行してください。現在どのブランチにいるかも表示されます。',
+            relatedCommands: ['diff', 'log', 'add'],
+            nextSteps: '✨ 変更があれば「git add」でステージング、詳しい差分は「git diff」で確認できます。',
             examples: [
                 'git status',
                 'git status -s'
@@ -36,7 +39,10 @@ const CommandDatabase = {
                 '--all': 'すべてのブランチを表示',
                 '-n': '表示するコミット数を指定'
             },
-            explanation: 'リポジトリの履歴を確認できます。ブランチの状態を把握するのに役立ちます。',
+            explanation: 'いつ、誰が、何をコミットしたかの履歴を時系列で表示します。コミットID（ハッシュ）、作成者、日時、コミットメッセージが確認できます。--onelineオプションで1行にまとめると見やすくなります。--graphオプションでブランチの分岐・統合が視覚的に分かります。最後のコミットを取り消したい時などに、まずgit logで確認するのが基本です。',
+            prerequisites: '💡 Gitリポジトリ内で実行してください。コミットが1つもない場合は何も表示されません。',
+            relatedCommands: ['status', 'diff', 'reset'],
+            nextSteps: '✨ 特定のコミットを取り消したい場合は「git reset」、詳しい変更内容を見たい場合は「git diff」を使います。',
             examples: [
                 'git log',
                 'git log --oneline --graph --all'
@@ -52,7 +58,10 @@ const CommandDatabase = {
                 '--staged': 'ステージング済みの変更を表示',
                 'HEAD': '最新コミットとの差分'
             },
-            explanation: 'ファイルの変更内容を詳しく確認できます。コミット前の確認に便利です。',
+            explanation: 'ファイルのどこがどう変更されたかを行単位で表示します。緑色の「+」は追加された行、赤色の「-」は削除された行です。オプションなしだと「まだgit addしていない変更」を表示、--stagedオプションで「git add済みでこれからコミットされる変更」を表示します。コミット前に必ず確認すると、意図しない変更を含めてしまうミスを防げます。',
+            prerequisites: '💡 変更したファイルがある場合のみ差分が表示されます。何も表示されない場合は変更がありません。',
+            relatedCommands: ['status', 'add', 'commit'],
+            nextSteps: '✨ 変更内容を確認したら「git add」でステージング、その後「git commit」でコミットします。',
             examples: [
                 'git diff',
                 'git diff --staged',
@@ -96,6 +105,9 @@ const CommandDatabase = {
                 '--patch': '対話的にステージング'
             },
             explanation: '変更したファイルを「次のコミットに含める」リストに追加します。これを「ステージングする」と言います。git addしたファイルだけがコミット対象になります。git add .で現在のフォルダの全ファイルをステージングできますが、不要なファイルまで含めないよう注意が必要です。',
+            prerequisites: '💡 まず「git status」または「git diff」で変更内容を確認してから、必要なファイルだけをaddするのが安全です。',
+            relatedCommands: ['status', 'diff', 'commit', 'reset'],
+            nextSteps: '✨ ステージングしたら「git status」で確認、問題なければ「git commit」でコミットします。間違えた場合は「git reset HEAD ファイル名」で取り消せます。',
             examples: [
                 'git add ファイル名',
                 'git add .',
@@ -114,6 +126,9 @@ const CommandDatabase = {
                 '--no-verify': 'フックをスキップ（非推奨）'
             },
             explanation: 'ステージングしたファイルの変更を1つの「セーブポイント」として保存します。-mオプションで変更内容を説明するメッセージを書きます（例："Fix login bug" "Add user profile page"）。コミットした内容はgit logで後から確認できます。コミットしただけではまだGitHubには反映されません（git pushが必要）。',
+            prerequisites: '💡 コミット前に「git status」でステージング状態を確認しましょう。緑色のファイルがコミット対象です。',
+            relatedCommands: ['add', 'status', 'push', 'log'],
+            nextSteps: '✨ コミットしたら「git log」で記録を確認、GitHubに反映させるには「git push」を実行します。',
             examples: [
                 'git commit -m "コミットメッセージ"',
                 'git commit -am "変更をコミット"'
@@ -140,6 +155,9 @@ const CommandDatabase = {
                 '--tags': 'タグもプッシュ'
             },
             explanation: 'ローカルでコミットした変更をGitHubなどのリモートリポジトリに送信（アップロード）します。これによって初めて他の人や他の環境から変更が見えるようになります。origin=自分のリポジトリ、upstream=フォーク元を指します。通常はoriginにプッシュします。初回は-uオプションでブランチを紐付ける必要があります。',
+            prerequisites: '💡 プッシュ前に「git log」でコミット履歴を確認、「git remote -v」でプッシュ先を確認しましょう。',
+            relatedCommands: ['commit', 'pull', 'remote', 'log'],
+            nextSteps: '✨ プッシュ後はGitHubでPull Requestを作成したり、「git pull」で他の環境と同期できます。',
             examples: [
                 'git push origin ブランチ名',
                 'git push -u origin feature-branch'
@@ -178,6 +196,9 @@ const CommandDatabase = {
                 '--no-commit': 'マージをコミットしない'
             },
             explanation: 'GitHubなどリモートリポジトリの最新の変更をローカルに取得して、自動的に現在のブランチに統合（マージ）します。他の環境（Claude Codeなど）で変更してプッシュした内容を取り込む時に使います。プッシュする前に必ずpullしておくと、他の変更と衝突するリスクを減らせます。git fetch + git mergeを1コマンドで実行するのと同じです。',
+            prerequisites: '💡 ローカルに未コミットの変更がある場合は先にコミットまたはstashしましょう。コンフリクトを避けられます。',
+            relatedCommands: ['fetch', 'push', 'status', 'merge'],
+            nextSteps: '✨ pullしたら「git log」で取得した変更を確認、コンフリクトがあれば解決してコミットします。',
             examples: [
                 'git pull origin main',
                 'git pull --rebase'
@@ -194,6 +215,9 @@ const CommandDatabase = {
                 '-p': '削除されたブランチを整理'
             },
             explanation: 'リモートリポジトリの最新状態を取得しますが、ローカルのファイルには反映しません。「リモートで何が変更されたか確認してから、マージするか判断したい」という場合に使います。fetchした後、git logやgit diffで内容を確認してから、必要に応じてgit mergeで統合できます。pullより安全ですが手順が多いです。',
+            prerequisites: '💡 リモートリポジトリが設定されている必要があります。「git remote -v」で確認できます。',
+            relatedCommands: ['pull', 'merge', 'log', 'diff'],
+            nextSteps: '✨ fetchしたら「git log origin/main」でリモートの変更を確認、問題なければ「git merge」または「git pull」で統合します。',
             examples: [
                 'git fetch origin',
                 'git fetch --all --prune'
@@ -212,7 +236,10 @@ const CommandDatabase = {
                 '-D': 'ブランチを強制削除',
                 '-m': 'ブランチ名を変更'
             },
-            explanation: 'ブランチの管理を行います。',
+            explanation: 'ブランチ（作業の枝分かれ）を作成、一覧表示、削除できます。オプションなしで実行すると現在あるブランチの一覧を表示し、*印が現在いるブランチです。新規作成は「git branch ブランチ名」ですが、作成後に切り替えるには別途「git switch」が必要です。「git switch -c ブランチ名」なら作成と切り替えを同時にできます。',
+            prerequisites: '💡 現在どのブランチにいるか確認するには「git branch」または「git status」を実行します。',
+            relatedCommands: ['switch', 'checkout', 'merge', 'status'],
+            nextSteps: '✨ ブランチを作成したら「git switch」で切り替え、作業後は「git merge」で統合します。',
             examples: [
                 'git branch',
                 'git branch 新しいブランチ名',
@@ -234,7 +261,10 @@ const CommandDatabase = {
                 '-b': '新しいブランチを作成して切り替え',
                 '--': 'ファイルを復元（変更を破棄）'
             },
-            explanation: 'ブランチの切り替えやファイルの復元を行います。',
+            explanation: 'ブランチの切り替えやファイルの復元（変更の破棄）を行う多機能コマンドです。「git checkout ブランチ名」でブランチ切り替え、「git checkout -b 新ブランチ名」で作成と切り替えを同時実行、「git checkout -- ファイル名」で変更を取り消します。複数の機能があるため、最近のGitでは「git switch」（ブランチ切り替え専用）の使用が推奨されています。',
+            prerequisites: '💡 ブランチ切り替え前に「git status」で未コミットの変更がないか確認しましょう。変更があるとエラーになる場合があります。',
+            relatedCommands: ['switch', 'branch', 'restore', 'stash'],
+            nextSteps: '✨ ブランチを切り替えたら「git status」で確認、新しいブランチで作業を開始できます。',
             examples: [
                 'git checkout ブランチ名',
                 'git checkout -b 新しいブランチ名',
@@ -256,7 +286,10 @@ const CommandDatabase = {
                 '-c': '新しいブランチを作成して切り替え',
                 '--create': '新しいブランチを作成して切り替え'
             },
-            explanation: 'ブランチの切り替えに特化したコマンドです。checkoutより安全です。',
+            explanation: 'ブランチの切り替え専用のコマンドです。git checkoutの「ブランチ切り替え機能」だけを取り出した新しいコマンドで、ファイル復元などの他の機能がないため誤操作のリスクが低く安全です。Git 2.23以降で使えます。「git switch -c 新ブランチ名」で作成と切り替えを同時にできます。',
+            prerequisites: '💡 切り替え前に「git status」で未コミットの変更がないか確認しましょう。変更があると切り替えできない場合があります。',
+            relatedCommands: ['branch', 'checkout', 'status', 'stash'],
+            nextSteps: '✨ ブランチを切り替えたら「git status」で現在のブランチを確認、作業を開始できます。',
             examples: [
                 'git switch ブランチ名',
                 'git switch -c 新しいブランチ名'
@@ -272,7 +305,10 @@ const CommandDatabase = {
                 '--squash': 'コミットをまとめてマージ',
                 '--abort': 'マージを中止'
             },
-            explanation: '別のブランチの変更を取り込みます。コンフリクトが発生する可能性があります。',
+            explanation: '別のブランチで行った変更を現在のブランチに統合（マージ）します。例えば、feature-branchで開発した機能をmainブランチに取り込む時に使います。同じファイルの同じ箇所を双方で変更している場合、コンフリクト（衝突）が発生するので手動で解決が必要です。マージに失敗したら「git merge --abort」で中止できます。',
+            prerequisites: '💡 マージ前に「git log」で両ブランチの状態を確認、現在のブランチに未コミットの変更がないか「git status」でチェックしましょう。',
+            relatedCommands: ['branch', 'switch', 'pull', 'status'],
+            nextSteps: '✨ マージ後は「git log」で履歴を確認、コンフリクトがあれば解決してコミット、問題なければ「git push」で共有します。',
             examples: [
                 'git merge feature-branch',
                 'git merge --no-ff feature-branch'
@@ -290,6 +326,9 @@ const CommandDatabase = {
                 '--hard': 'すべてを完全に取り消し（危険）'
             },
             explanation: 'コミットを取り消します。--softは「コミット記録だけ削除、ファイルはステージング済み状態で残す」、--mixedは「コミット記録とステージングを解除、ファイルは変更状態で残す」、--hardは「コミットもファイルの変更も完全削除」です。--hardは元に戻せないので要注意！コミットメッセージを書き直したいだけなら--softが安全。まだプッシュしていないコミットにのみ使うべきです。',
+            prerequisites: '💡 取り消す前に「git log」でコミット履歴を確認、「git status」で現在の状態をチェックしましょう。プッシュ済みのコミットには使わないでください。',
+            relatedCommands: ['log', 'commit', 'revert', 'reflog'],
+            nextSteps: '✨ reset後は「git status」で状態を確認、必要に応じて再度コミットします。間違えた場合は「git reflog」で履歴を確認できます。',
             examples: [
                 'git reset HEAD~1',
                 'git reset --soft HEAD~1',
@@ -337,6 +376,9 @@ const CommandDatabase = {
                 '-b': '特定のブランチをクローン'
             },
             explanation: 'GitHubなどのリモートリポジトリをローカルPCに丸ごとダウンロードします。すべてのファイル、コミット履歴、ブランチがコピーされます。リポジトリ名と同じ名前のフォルダが自動作成され、その中にファイルが展開されます。originリモートも自動設定されるので、すぐにpull/pushできます。他人のプロジェクトで作業を始める時の最初のステップです。',
+            prerequisites: '💡 GitHubリポジトリのURLが必要です。リポジトリページの緑色の「Code」ボタンからURLをコピーできます。',
+            relatedCommands: ['remote', 'pull', 'status', 'branch'],
+            nextSteps: '✨ クローン後は「cd リポジトリ名」でディレクトリに移動、「git status」で状態確認、すぐに作業を開始できます。',
             examples: [
                 'git clone https://github.com/user/repo.git',
                 'git clone --depth 1 https://github.com/user/repo.git'
@@ -392,6 +434,9 @@ const CommandDatabase = {
                 'clear': 'すべての保存を削除'
             },
             explanation: '作業中の変更を一時的に「避難所」に保存して、作業ディレクトリをクリーンな状態に戻します。別のブランチに切り替える必要があるが、今の変更はまだコミットしたくない（中途半端な状態）という時に便利です。git stashで退避、git stash popで復元できます。複数の退避を保存でき、git stash listで一覧を見られます。コミットせずに変更を安全に保管できる仕組みです。',
+            prerequisites: '💡 stash前に「git status」で保存対象の変更を確認しましょう。未追跡ファイルは含まれないので注意（-uオプションで含められます）。',
+            relatedCommands: ['status', 'switch', 'checkout', 'commit'],
+            nextSteps: '✨ stash後は「git stash list」で保存一覧を確認、作業完了後「git stash pop」で変更を復元します。',
             examples: [
                 'git stash',
                 'git stash pop',
