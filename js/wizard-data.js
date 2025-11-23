@@ -881,6 +881,344 @@ Unmerged paths:
                 `
             }
         ]
+    },
+
+    /**
+     * Git & GitHub 連携マスターコース
+     */
+    'git-github-integration': {
+        title: 'Git & GitHub 連携マスター',
+        description: 'ローカルGitとGitHubの連携を完全理解',
+        difficulty: 'intermediate',
+        estimatedTime: '25分',
+        steps: [
+            {
+                id: 'intro',
+                title: 'Git と GitHub の違いを理解する',
+                type: 'info',
+                content: `
+                    <h3>🎯 このコースで学ぶこと</h3>
+                    <p>Git（ローカル）とGitHub（リモート）の関係性と、効果的な連携方法を学びます。</p>
+                    <ul>
+                        <li>✅ Git と GitHub の違いと役割</li>
+                        <li>✅ ローカルとリモートの同期</li>
+                        <li>✅ origin と upstream の使い分け</li>
+                        <li>✅ GitHub CLI を使った効率的なワークフロー</li>
+                        <li>✅ プルリクエストとイシューの管理</li>
+                    </ul>
+                    <div class="info-box">
+                        <h4>📚 Git vs GitHub</h4>
+                        <p><strong>Git:</strong> ローカルマシンで動作するバージョン管理システム。インターネット接続不要。</p>
+                        <p><strong>GitHub:</strong> Gitリポジトリをクラウドで管理・共有するためのプラットフォーム。インターネット接続必須。</p>
+                    </div>
+                `
+            },
+            {
+                id: 'local-setup',
+                title: 'ステップ1: ローカルリポジトリの準備',
+                type: 'command',
+                content: `
+                    <p>まず、ローカルでGitリポジトリを作成し、最初のコミットを行います。</p>
+                    <p><strong>🔍 ポイント:</strong> この段階ではまだGitHubは関係ありません。すべてローカルで完結しています。</p>
+                `,
+                commands: [
+                    {
+                        command: 'mkdir github-integration-demo',
+                        explanation: 'デモ用のディレクトリを作成'
+                    },
+                    {
+                        command: 'cd github-integration-demo',
+                        explanation: 'ディレクトリに移動'
+                    },
+                    {
+                        command: 'git init',
+                        explanation: 'Gitリポジトリとして初期化（ローカルのみ）',
+                        highlight: true
+                    },
+                    {
+                        command: 'echo "# GitHub Integration Demo" > README.md',
+                        explanation: 'README.md を作成'
+                    },
+                    {
+                        command: 'git add README.md && git commit -m "Initial commit"',
+                        explanation: 'ファイルをステージングしてコミット（ローカルに記録）',
+                        highlight: true
+                    }
+                ],
+                note: '💡 この時点では、すべての変更はあなたのマシンにのみ存在しています。',
+                verification: `
+                    <h4>✅ 確認:</h4>
+                    <code>git log --oneline</code>
+                    <p>コミット履歴が表示されればOK。これはローカルの履歴です。</p>
+                `
+            },
+            {
+                id: 'github-create',
+                title: 'ステップ2: GitHubリポジトリを作成',
+                type: 'choice',
+                content: `
+                    <p>次に、GitHubにリモートリポジトリを作成します。2つの方法があります。</p>
+                `,
+                choices: [
+                    {
+                        icon: '🌐',
+                        title: '方法1: GitHub Web UIで作成',
+                        content: `
+                            <ol>
+                                <li>GitHub.com にアクセス</li>
+                                <li>右上の「+」→「New repository」をクリック</li>
+                                <li>リポジトリ名を入力（例: github-integration-demo）</li>
+                                <li>「Create repository」をクリック</li>
+                            </ol>
+                            <div class="warning-box">
+                                <strong>⚠️ 注意:</strong> 「Initialize with README」はチェックしない（すでにローカルにあるため）
+                            </div>
+                        `
+                    },
+                    {
+                        icon: '⌨️',
+                        title: '方法2: GitHub CLI で作成',
+                        content: `
+                            <p>コマンドラインから直接作成できます（推奨）：</p>
+                        `,
+                        commands: [
+                            {
+                                command: 'gh repo create github-integration-demo --public --source=. --remote=origin',
+                                explanation: 'GitHubにリポジトリを作成し、現在のディレクトリと紐付け',
+                                highlight: true
+                            }
+                        ]
+                    }
+                ],
+                note: '💡 GitHub CLI を使うと、ブラウザを開かずにすべてコマンドラインで完結します。'
+            },
+            {
+                id: 'remote-add',
+                title: 'ステップ3: リモートを追加（Web UIで作成した場合）',
+                type: 'command',
+                content: `
+                    <p><strong>GitHub Web UIで作成した場合のみ：</strong></p>
+                    <p>ローカルリポジトリとGitHubリポジトリを紐付けます。この接続を「リモート」と呼び、通常は <code>origin</code> という名前を付けます。</p>
+                    <div class="info-box">
+                        <strong>📌 origin とは？</strong>
+                        <p><code>origin</code> は、あなた自身のGitHubリポジトリを指す慣習的な名前です。</p>
+                    </div>
+                `,
+                commands: [
+                    {
+                        command: 'git remote add origin https://github.com/YOUR_USERNAME/github-integration-demo.git',
+                        explanation: 'リモートリポジトリを origin という名前で登録',
+                        highlight: true
+                    },
+                    {
+                        command: 'git remote -v',
+                        explanation: '登録されたリモートを確認'
+                    }
+                ],
+                note: '💡 GitHub CLI で作成した場合は、自動的に origin が設定されているため、このステップはスキップできます。',
+                expectedOutput: `origin  https://github.com/YOUR_USERNAME/github-integration-demo.git (fetch)
+origin  https://github.com/YOUR_USERNAME/github-integration-demo.git (push)`
+            },
+            {
+                id: 'first-push',
+                title: 'ステップ4: 初めてのプッシュ',
+                type: 'command',
+                content: `
+                    <p>ローカルのコミットをGitHubに送信（プッシュ）します。</p>
+                    <div class="info-box">
+                        <h4>🚀 プッシュとは？</h4>
+                        <p>ローカルのコミット履歴をリモート（GitHub）にアップロードすることです。</p>
+                        <p>この後、チームメンバーがあなたの変更を見られるようになります。</p>
+                    </div>
+                `,
+                commands: [
+                    {
+                        command: 'git branch -M main',
+                        explanation: 'ブランチ名を main に統一（GitHubのデフォルトに合わせる）'
+                    },
+                    {
+                        command: 'git push -u origin main',
+                        explanation: 'main ブランチを GitHub にプッシュし、追跡設定',
+                        highlight: true
+                    }
+                ],
+                note: '💡 <code>-u</code> フラグは、今後 <code>git push</code> だけで origin/main にプッシュできるように設定します。',
+                verification: `
+                    <h4>✅ 確認:</h4>
+                    <p>GitHub.com であなたのリポジトリを開くと、README.md が表示されているはずです！</p>
+                `
+            },
+            {
+                id: 'workflow',
+                title: 'ステップ5: 日常的なワークフロー',
+                type: 'command',
+                content: `
+                    <p>これが、GitとGitHubを使った基本的な作業の流れです。</p>
+                    <h4>📝 典型的なワークフロー:</h4>
+                `,
+                commands: [
+                    {
+                        command: 'git pull origin main',
+                        explanation: '1. 最新の変更をGitHubから取得',
+                        highlight: true
+                    },
+                    {
+                        command: 'echo "New content" >> README.md',
+                        explanation: '2. ファイルを編集'
+                    },
+                    {
+                        command: 'git status',
+                        explanation: '3. 変更を確認（ローカルの状態チェック）',
+                        highlight: true
+                    },
+                    {
+                        command: 'git add README.md',
+                        explanation: '4. 変更をステージング（コミット準備）'
+                    },
+                    {
+                        command: 'git commit -m "Update README"',
+                        explanation: '5. ローカルにコミット（記録）',
+                        highlight: true
+                    },
+                    {
+                        command: 'git push origin main',
+                        explanation: '6. GitHubにプッシュ（共有）',
+                        highlight: true
+                    }
+                ],
+                diagram: `
+                    <pre style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; overflow-x: auto;">
+┌─────────────────┐          ┌─────────────────┐
+│  ローカル (Git)  │  ←pull→  │ リモート (GitHub) │
+│                 │  ─push→  │                 │
+│  - 作業ディレクトリ │          │  - origin/main  │
+│  - ステージング   │          │                 │
+│  - ローカルリポジトリ│          │                 │
+└─────────────────┘          └─────────────────┘
+                    </pre>
+                `
+            },
+            {
+                id: 'origin-upstream',
+                title: 'ステップ6: origin と upstream の違い',
+                type: 'info',
+                content: `
+                    <h3>🔀 origin vs upstream</h3>
+                    <p>他人のリポジトリをフォークして作業する場合、2つのリモートを使います。</p>
+                    <div class="info-box">
+                        <h4>📌 origin</h4>
+                        <p>あなた自身のGitHubリポジトリ（フォーク）</p>
+                        <p><strong>用途:</strong> あなたの変更をプッシュする先</p>
+                        <p><strong>例:</strong> <code>git push origin my-feature</code></p>
+                    </div>
+                    <div class="info-box">
+                        <h4>📌 upstream</h4>
+                        <p>フォーク元のオリジナルリポジトリ</p>
+                        <p><strong>用途:</strong> 最新の変更を取得する元</p>
+                        <p><strong>例:</strong> <code>git pull upstream main</code></p>
+                    </div>
+                    <div class="warning-box">
+                        <strong>🚨 重要:</strong>
+                        <p><code>git push upstream main</code> は通常NGです！</p>
+                        <p>フォーク元に直接プッシュするのではなく、プルリクエストを使います。</p>
+                    </div>
+                `,
+                diagram: `
+                    <pre style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; overflow-x: auto;">
+┌────────────────────────┐
+│  upstream (フォーク元)    │
+│  original-owner/repo   │
+└───────────┬────────────┘
+            │ pull で最新を取得
+            │ （push は通常しない）
+            │
+┌───────────▼────────────┐
+│  origin (あなたのフォーク)  │
+│  your-name/repo        │
+└───────────┬────────────┘
+            │ push/pull
+            │
+┌───────────▼────────────┐
+│  ローカルリポジトリ         │
+│  あなたのPC              │
+└────────────────────────┘
+                    </pre>
+                `
+            },
+            {
+                id: 'gh-cli-power',
+                title: 'ステップ7: GitHub CLI の活用',
+                type: 'command',
+                content: `
+                    <p>GitHub CLI（gh）を使うと、ブラウザなしで GitHub の機能を使えます。</p>
+                    <h4>🎯 便利なコマンド:</h4>
+                `,
+                commands: [
+                    {
+                        command: 'gh pr create --title "Add new feature" --body "Description"',
+                        explanation: 'プルリクエストを作成',
+                        highlight: true
+                    },
+                    {
+                        command: 'gh pr list',
+                        explanation: 'プルリクエスト一覧を表示'
+                    },
+                    {
+                        command: 'gh pr view 123',
+                        explanation: 'PR #123 の詳細を表示'
+                    },
+                    {
+                        command: 'gh issue create --title "Bug report"',
+                        explanation: 'イシューを作成',
+                        highlight: true
+                    },
+                    {
+                        command: 'gh repo view',
+                        explanation: 'リポジトリ情報を表示'
+                    },
+                    {
+                        command: 'gh repo sync',
+                        explanation: 'フォークを最新状態に同期（upstreamから）',
+                        highlight: true
+                    }
+                ],
+                note: '💡 GitHub CLI は、ワークフローを大幅に効率化できる強力なツールです！'
+            },
+            {
+                id: 'summary',
+                title: '完了：まとめ',
+                type: 'info',
+                content: `
+                    <h3>🎉 おめでとうございます！</h3>
+                    <p>GitとGitHubの連携について理解できました。</p>
+                    <div class="success-box">
+                        <h4>📚 学んだこと:</h4>
+                        <ul>
+                            <li>✅ Git（ローカル）とGitHub（リモート）の役割分担</li>
+                            <li>✅ リモートの追加と管理</li>
+                            <li>✅ push/pull による同期</li>
+                            <li>✅ origin と upstream の使い分け</li>
+                            <li>✅ GitHub CLI を使った効率的なワークフロー</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <h4>🔑 重要なポイント:</h4>
+                        <ol>
+                            <li><strong>ローカルで作業</strong> → <code>git add</code>, <code>git commit</code></li>
+                            <li><strong>リモートと同期</strong> → <code>git push</code>, <code>git pull</code></li>
+                            <li><strong>origin にプッシュ</strong> → 自分のリポジトリ</li>
+                            <li><strong>upstream から pull</strong> → フォーク元の更新を取得</li>
+                            <li><strong>upstream に push は NG</strong> → 代わりにプルリクエスト</li>
+                        </ol>
+                    </div>
+                    <div class="next-steps">
+                        <h4>🚀 次のステップ:</h4>
+                        <p>実際のプロジェクトで、学んだワークフローを実践してみましょう！</p>
+                        <p>「Fork & Contribute」コースで、OSSへの貢献方法も学べます。</p>
+                    </div>
+                `
+            }
+        ]
     }
 };
 

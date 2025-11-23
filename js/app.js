@@ -481,6 +481,24 @@ class GitWizardApp {
             ],
             'issue-create': [
                 { name: 'title', label: 'Issueのタイトル', type: 'text', placeholder: 'Bug: Something is broken', required: true }
+            ],
+            'local-to-github': [
+                { name: 'repoName', label: 'リポジトリ名', type: 'text', placeholder: 'my-project', required: true },
+                { name: 'visibility', label: '公開設定', type: 'select', options: ['public', 'private'], default: 'public' },
+                { name: 'autoRemote', label: 'リモートを自動設定', type: 'checkbox', default: true }
+            ],
+            'setup-upstream': [
+                { name: 'upstreamOwner', label: 'フォーク元のオーナー名', type: 'text', placeholder: 'original-owner', required: true },
+                { name: 'upstreamRepo', label: 'フォーク元のリポジトリ名', type: 'text', placeholder: 'repo-name', required: true }
+            ],
+            'sync-with-upstream': [
+                { name: 'branch', label: '同期するブランチ', type: 'text', placeholder: 'main', default: 'main' },
+                { name: 'strategy', label: '同期方法', type: 'select', options: ['merge', 'rebase'], default: 'merge' }
+            ],
+            'create-pr-from-fork': [
+                { name: 'sourceBranch', label: 'あなたのブランチ', type: 'text', placeholder: 'feature-branch', required: true },
+                { name: 'targetBranch', label: 'マージ先ブランチ', type: 'text', placeholder: 'main', default: 'main' },
+                { name: 'upstreamRepo', label: 'フォーク元リポジトリ', type: 'text', placeholder: 'owner/repo', required: true }
             ]
         };
 
@@ -628,7 +646,27 @@ class GitWizardApp {
             'issue-create': () => {
                 return `gh issue create --title "${data.title}"`;
             },
-            'issue-list': () => 'gh issue list'
+            'issue-list': () => 'gh issue list',
+            'local-to-github': () => {
+                const visibility = data.visibility === 'private' ? '--private' : '--public';
+                const remote = data.autoRemote ? '--source=. --remote=origin' : '';
+                return `gh repo create ${data.repoName} ${visibility} ${remote}`.trim();
+            },
+            'setup-upstream': () => {
+                return `git remote add upstream https://github.com/${data.upstreamOwner}/${data.upstreamRepo}.git`;
+            },
+            'sync-with-upstream': () => {
+                const branch = data.branch || 'main';
+                if (data.strategy === 'rebase') {
+                    return `git fetch upstream && git rebase upstream/${branch}`;
+                } else {
+                    return `git fetch upstream && git merge upstream/${branch}`;
+                }
+            },
+            'create-pr-from-fork': () => {
+                const target = data.targetBranch || 'main';
+                return `git push origin ${data.sourceBranch} && gh pr create --repo ${data.upstreamRepo} --base ${target} --head ${data.sourceBranch}`;
+            }
         };
 
         return commands[scenario] ? commands[scenario]() : '';
